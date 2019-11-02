@@ -1,0 +1,48 @@
+---
+title: What are design patterns?
+date: 2019-11-02T15:20:22+02:00
+---
+OOP (object-oriented programming) gurus once concluded that it's pointless to reinvent the wheel
+each time they encounter a problem in application design. Writing flexible and reusable code is hard. They knew that they should not tackle the problem from the ground up.
+Instead, they gathered and categorized battle-tested approaches in structuring code that were reoccurring in many different projects. This is why in many systems, applications and frameworks we
+can see repetitive class diagrams and object compositions.
+
+Such reusable patterns are not only common in application development - take a look at literature, where themes, motifs and symbols from bible or ancient greek myths are still present in modern writings.
+
+**Patterns that worked before are likely to work now.
+This, in theory, is a promise that design patterns give us.**
+
+Before we go through the most common patterns and finally see some code, let's discus what are they made of and how they are categorized.
+
+![Yoda Patience](../assets/yoda-patience-young-padawan.jpg)
+
+___
+
+## Pattern elements
+According to [GOF]([https://link](https://www.amazon.com/Design-Patterns-Elements-Reusable-Object-Oriented/dp/0201633612)), a design pattern is made of 4 elements:
+
+1. **Name** - one or two words that describe the pattern
+2. **Problem description** - describes when to use a given pattern
+3. **Solution** - abstract description of classes, objects and their relations in the pattern
+4. **Consequences** - pros and cons of using a given pattern
+
+## Categories
+As there are quite a lot of them, they had to be categorized.
+
+#### Creational
+Patterns responsible for object creation.
+
+#### Structural
+Patterns involved in the way of composing classes and objects.
+
+#### Behavioural 
+Patterns that describe the way objects and classes work, share tasks and cooperate.
+
+There is one more thing by which patterns are categorized...
+### The "Scope"
+
+**Class-scope** - class scope pattern goals are realized at compile time using inheritance, which means they are 'static'.
+
+**Object-scope** - their goals are achieved usually through composition during the runtime, which makes them more 'dynamic'.
+
+Enough theory - by now you should already have a hang of design patterns. In following posts in this series we'll go through some of the most popular patterns with code examples.
