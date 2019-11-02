@@ -7,6 +7,14 @@ module.exports = {
         basePath: `/notes`,
       },
     },
+    // fixes double-image problem possibly in gatsby-plugin-mdx
+    {
+      resolve: 'gatsby-plugin-mdx',
+      options: {
+        gatsbyRemarkPlugins: [ `gatsby-remark-images` ],
+        plugins: [ `gatsby-remark-images` ],
+      }
+    },
     // with gatsby-plugin-theme-ui, the last theme in the config
     // will override the theme-ui context from other themes
     {
