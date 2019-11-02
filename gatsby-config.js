@@ -9,9 +9,31 @@ module.exports = {
     },
     // with gatsby-plugin-theme-ui, the last theme in the config
     // will override the theme-ui context from other themes
-    { resolve: `gatsby-theme-blog` },
+    {
+      resolve: `gatsby-theme-blog`,
+      options: {
+        basePath: `/posts`,
+      },
+    },
   ],
   siteMetadata: {
-    title: `Shadowed Site Title`,
+    title: `talkoverflow`,
+    author: `Patryk Jeziorowski`,
+    description: `Homepage and blog by Patryk Jeziorowski`,
+    pages: [
+      {label: 'Posts', path: '/posts'},
+      {label: 'Tips', path: '/tips'},
+      {label: 'Notes', path: '/notes'},
+    ],
+    social: [
+      {
+        name: `twitter`,  
+        url: `https://twitter.com/pjeziorowski`,
+      },
+      {
+        name: `github`,
+        url: `https://github.com/pjeziorowski`,
+      },
+    ],
   },
 }
