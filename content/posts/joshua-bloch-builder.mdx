@@ -1,0 +1,275 @@
+---
+title: Joshua Bloch's Builder
+date: 2019-11-04T11:14:22+02:00
+---
+## Multiple constructor parameters problem
+In [post about static factory methods](/posts/static-factory-methods) we introduced an alternative way of instantiating objects - using static methods in place of direct constructor invocation.
+Despite all the benefits it gives, this won't do well if the factory method takes multiple parameters, especially when most of them are optional.
+
+## Common solutions
+### Telescoping Constructor
+What is often seen in Java to deal with this issue is using 'telescoping constructors'.
+```java
+    public Person(String firstName, String lastName) {
+        this(firstName, lastName, "Some Default Value");
+    }
+
+    public Person(String firstName, String lastName, String description) {
+        this(firstName, lastName, description, 0);
+    }
+
+    public Person(String firstName, String lastName, String description, int age) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.description = description;
+        this.age = age;
+    }
+```
+In telescoping constructor pattern, we provide additional constructors that call another constructor with default parameters.
+```java
+    // one of constructors body that call another constructor with default argument
+    this(firstName, lastName, "Some Default Value");
+```
+While this... works, it quickly becomes unreadable with more parameters. Additionally, the order of arguments in such constructors is important. If, for example, you have to pass 4 String arguments, you can easily put them in incorrect order.
+Compiler has no chance to detect this mistake. The issue may be hard to spot and debug, or, the worse, the program may seem to work fine but give invalid results (e.g. misplacing name with lastname)
+
+### Another approach - JavaBeans
+
+This approach to solve issue with multiple parameters is very simple and easy to implement - you just create a POJO with parameterless constructor and provide getters and setters for all fields.
+
+```java
+public class JavaBean {
+    private String field1;
+    private int field2;
+    private double filed3;
+
+    public String getField1() {
+        return field1;
+    }
+
+    public void setField1(String field1) {
+        this.field1 = field1;
+    }
+
+    public int getField2() {
+        return field2;
+    }
+
+    public void setField2(int field2) {
+        this.field2 = field2;
+    }
+
+    public double getFiled3() {
+        return filed3;
+    }
+
+    public void setFiled3(double filed3) {
+        this.filed3 = filed3;
+    }
+}
+```
+
+While it's easy to implement and work fine in simple cases, it comes with major drawbacks.
+
+Exposing setters for all fields simply disables the possibility of creating immutable objects. Additionally, object creation is split between many method invocations, so the object, for a short time, is in an inconsistent state.
+
+## Joshua Bloch's Builder to the rescue
+
+To address all issues from above, Joshua Bloch introduced the edited version of the Builder pattern from Gang of Four.
+His approach to solve multiple optional parameters problem is to first create a Builder object with all required parameters, add setter methods for optional parameters
+and provide finalizing build method that assembles all passed values and instantiates the object in one shot.
+
+Let's take a look at code example to make it more clear.
+
+The implementation:
+```java
+public class ComplicatedObjectWithManyFields {
+    final private String id;
+    final private String description;
+    final private int optionalInteger;
+    final private double anotherOptionalValue;
+    final private String additionalDescription;
+
+    // public constructor that takes Builder
+    private ComplicatedObjectWithManyFields(final Builder builder) {
+        id = builder.id;
+        description = builder.description;
+        optionalInteger = builder.optionalInteger;
+        anotherOptionalValue = builder.anotherOptionalValue;
+        additionalDescription = builder.additionalDescription
+    }
+
+    public static class Builder {
+        final private String id;
+        final private String description;
+        private int optionalInteger;
+        private double anotherOptionalValue;
+        private String additionalDescription;
+
+        // sets required fields
+        public Builder(final String id, final String description) {
+            this.id = id;
+            this.description = description;
+        }
+
+        // setters may be used to set optional Values
+        public Builder optionalInteger(final int optionalInteger) {
+            this.optionalInteger = optionalInteger;
+            return this;
+        }
+
+        public Builder anotherOptionalValue(final double anotherOptionalValue) {
+            this.anotherOptionalValue = anotherOptionalValue;
+            return this;
+        }
+
+        public Builder additionalDescription(final String additionalDescription) {
+            this.additionalDescription = additionalDescription;
+            return this;
+        }
+
+        // creates object with values taken from builder instance
+        public ComplicatedObjectWithManyFields build() {
+            return new ComplicatedObjectWithManyFields(this);
+        }
+    }
+}
+```
+Let's discuss it step by step.
+
+First, we have plain Java class with some fields
+```java
+public class ComplicatedObjectWithManyFields {
+    final private String id;
+    final private String description;
+    final private int optionalInteger;
+    final private double anotherOptionalValue;
+    final private String additionalDescription;
+    // skipped rest
+    // ...
+}
+```
+Let's assume that first two fields, id and description, are required, and the rest is optional.
+
+To use builder we need to provide a constructor that takes builder as a parameter.
+```java
+private ComplicatedObjectWithManyFields(final Builder builder) {
+    // impl skipped for now
+}
+```
+
+Now, let's implement the builder 
+```java
+    public static class Builder {
+        final private String id;
+        final private String description;
+        private int optionalInteger;
+        private double anotherOptionalValue;
+        private String additionalDescription;
+        // skipped rest for now
+    }
+```
+As you see, we put the same fields on the builder as on our base class.
+
+It's time to create constructor
+```java
+    // sets required fields
+    public Builder(final String id, final String description) {
+        this.id = id;
+        this.description = description;
+    }
+```
+The constructor takes required values as parameters.
+
+Optional values are set via setter methods
+
+```java
+    // setters may be used to set optional Values
+    public Builder optionalInteger(final int optionalInteger) {
+        this.optionalInteger = optionalInteger;
+        return this;
+    }
+```
+
+The important thing to notice here is that setter methods return *this*, the builder itself. It will help us create nice and clean API, as you will see in a second.
+
+We got all the fields of our class added also to the builder, so we can finish our class' constructor implementation
+```java
+    // public constructor that takes Builder
+    private ComplicatedObjectWithManyFields(final Builder builder) {
+        // added fields initialization
+        id = builder.id;
+        description = builder.description;
+        optionalInteger = builder.optionalInteger;
+        anotherOptionalValue = builder.anotherOptionalValue;
+        additionalDescription = builder.additionalDescription;
+    }
+```
+All the fields in constructor are initialized with values from the builder
+
+The last step in implementation is to add the method that will create our objects
+```java
+    // creates object with values taken from builder instance
+    public ComplicatedObjectWithManyFields build() {
+        return new ComplicatedObjectWithManyFields(this);
+    }
+```
+
+In this method, we invoke the constructor from our ComplicatedObjectWithManyFields class and pass *this* (the builder we invoke the build() method on).
+
+Let's take a look how clients of our API will use our builder.
+
+```java
+public class Test {
+    public static void main(String[] args) {
+        final String id = "id";
+        final String description = "required description";
+
+        final ComplicatedObjectWithManyFields.Builder builder = new ComplicatedObjectWithManyFields.Builder(id, description);
+
+        builder.additionalDescription("setting additional optional description")
+               .optionalInteger(5)
+               .anotherOptionalValue(2.23);
+
+        final ComplicatedObjectWithManyFields createdObject = builder.build();
+
+        System.out.println(createdObject);
+        // prints ComplicatedObjectWithManyFields
+        // {id='id', description='required description', optionalInteger=5, anotherOptionalValue=2.23, 
+        // additionalDescription='setting additional optional description'}
+    }
+}
+```
+
+In the first step, we create the builder with required parameters
+```java
+    final ComplicatedObjectWithManyFields.Builder builder = new ComplicatedObjectWithManyFields.Builder(id, description);
+```
+Then, we can set all optional values
+```java
+    builder.additionalDescription("setting additional optional description")
+            .optionalInteger(5)
+            .anotherOptionalValue(2.23);
+```
+Thanks to returning the builder from setter methods, we can nicely chain the setters invocations.
+
+And at the end, we create our object
+```java
+    final ComplicatedObjectWithManyFields createdObject = builder.build();
+```
+
+We could even chain the build() method with setters
+```java
+    final ComplicatedObjectWithManyFields createdObject =
+        builder.additionalDescription("setting additional optional description")
+               .optionalInteger(5)
+               .anotherOptionalValue(2.23)
+               .build();
+```
+
+As you can see, the API is clean and easy to understand. 
+
+## Conclusion
+Using the Joshua Bloch's version of Builder, we solved the issue with handling multiple input parameters in Java. This pattern simulates
+optional named parameters feature often seen in other programming languages like Scala, which is not present in Java unluckily. We also got rid of
+drawbacks from different approaches i.e. JavaBeans and telescoping constructors.
