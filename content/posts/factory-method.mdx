@@ -1,0 +1,157 @@
+---
+title: Factory Method pattern
+date: 2019-11-04T00:20:22+02:00
+---
+In the previous post, you learned what design patterns are. Now, it's time to introduce the first design pattern - Factory Method.
+
+## High level overview
+
+Factory Method is a creational design pattern, it's main goal is to delegate creation of used objects to subclasses. As it uses inheritance, it's a class-scope design pattern. 
+
+The main problem it solves is that it enables creating objects without having to specify the exact class of the object that will be created and used. It is done by delegating the dirty-job of calling concrete type constructor to factory method which is implemented by a subclass. 
+
+The great advantage is that it decouples object construction from clients they're used by. The class doesn't even have to know the exact object type it will use, it just knows that the object implements a given interface.
+
+Basically, this design pattern delegates deciding what concrete object to use in parent to the subclass.
+
+The formal Factory Method definition - "Define an interface for creating an object, but let subclasses decide which class to instantiate. The Factory method lets a class defer instantiation it uses to subclasses." ([Gang Of Four](https://en.wikipedia.org/wiki/Design_Patterns))
+
+
+## Common confusions
+There are some confusions on the internet regarding Factory Method pattern and static factory method concept popularized by Joshua Bloch in his famous [Effective Java](https://www.amazon.com/Effective-Java-Joshua-Bloch/dp/0134685997/ref=sr_1_1?crid=2CCFGXKTIXULT&keywords=effective+java&qid=1572855713&s=books&sprefix=effect%2Cstripbooks-intl-ship%2C415&sr=1-1).
+
+In [one of the previous posts](/posts/static-factory-methods), we discussed static factory methods. This is something different than we discuss now, which is classic factory method pattern introduced by Gang of Four in their book. After you see code examples in this post you'll see the difference between these two concepts.
+
+## Factory Method pattern elements
+Let's now take a look at specific elements of this pattern:
+
+- Creator - class that declares an abstract factory method to create a Product. It's subclasses override this method to return implementations of Product. Product may be later on used by the Creator to perform some business logic.
+- Product - object type used by creator (type returned from factory method)
+- Concrete creator - implementation of creator, overrides the factory method to return some specific implementation of Product
+- Concrete product - specific implementation of Product
+
+Before we write any code let's first take a look at the diagram of classes that we will create
+![Structure](../assets/factory-method.jpg)
+
+## Example in code
+
+The code example will be pretty basic - we have Arena (client) where great warriors (creators) fight with each other using various weapons(products).
+
+Let's start with the Product (weapon)
+
+```java
+public interface Weapon {
+    void smash(final Warrior enemy);
+}
+```
+
+This is very simple interface for weapons - weapon can simply smash enemy warrior
+Now let's take a look on Creator (warrior)
+
+```java
+abstract class Warrior {
+    private final Weapon weapon;
+    private final String name;
+
+    Warrior(final String name) {
+        this.name = name;
+        this.weapon = getWeapon();
+    }
+
+    protected abstract Weapon getWeapon();
+
+    void attack(final Warrior enemy) { weapon.smash(enemy); }
+
+    String name() { return name; }
+}
+```
+
+Warrior has some weapon (we don't know what weapon, we just know that it's some weapon) and can attack his opponent with whatever weapon he has
+
+Now let's create some bloody weapons (concrete products):
+
+```java
+public class Sword implements Weapon {
+    @Override
+    public void smash(final Warrior enemy) {
+        System.out.println("Smashed " + enemy.name() + " with Sword");
+    }
+}
+```
+
+```java
+public class Bow implements Weapon {
+    @Override
+    public void smash(final Warrior enemy) {
+        System.out.println("Smashed " + enemy.name() + " with Bow");
+    }
+}
+```
+
+So, we got two weapons, but we still need specific warriors(specific creators).
+
+```java
+class Swordsman extends Warrior {
+    Swordsman(String name) {
+        super(name);
+    }
+
+    @Override
+    protected Weapon getWeapon() {
+        return new Sword();
+    }
+}
+```
+
+```java
+class Archer extends Warrior {
+    Archer(String name) {
+        super(name);
+    }
+
+    @Override
+    protected Weapon getWeapon() {
+        return new Bow();
+    }
+}
+```
+
+As you can see, creation of specific weapons is delegated to specific creators. Specific warriors can decide which weapon to use.
+
+```java
+    // archer decides to use bow
+    @Override
+    protected Weapon getWeapon() {
+        return new Bow();
+    }
+```
+
+The creator (abstract Warrior class) doesn't care what weapon the warrior use as long as... it's a weapon.
+
+Let's take a look at our mighty warriors in action
+
+```java
+public class Arena {
+    public static void main(String[] args) {
+        Warrior geralt = new Swordsman("Geralt of Rivia");
+        Warrior legolas = new Archer("Legolas");
+
+        geralt.attack(legolas);
+        geralt.attack(legolas);
+
+        legolas.attack(geralt);
+        /* 
+        the output:
+        Smashed Legolas with Sword
+        Smashed Legolas with Sword
+        Smashed Geralt of Rivia with Bow
+         */
+    }
+}
+```
+
+## Conclusions
+The client code that uses this pattern is clear, simple and easy to understand. We definitely achieved our goal - we can easily create many types of warriors and delegate to subclasses which weapon to use.
+
+When to use this pattern?
+In short - anytime you want to delegate creation of used objects to subclasses or you don't know upfront the object type that should be used.

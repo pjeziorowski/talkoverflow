@@ -9,21 +9,21 @@ The topic of this short article is pretty simple - creation of objects. The most
 ## #1 - Static factory methods have names
 
 This may seem trivial, but it really helps designing clean and understandable APIs. Good method name can make your code understandable without looking into documentation or implementation in the code. This is really important, not only when you're writing some popular open source library, but also in your day-to-day work when your colleague tries to reuse or understand a class or service you created. I'll give you one abstract example:
-```Java
+```java
     new Time("08.05.2019")
 ```
 What does that represent? A certain point in time, a day? And now let's take a look on static factory method equivalent
-```Java
+```java
     Time.until("08.05.2019")
 ```
 This is much more clear. You don't have to check documentation or look deeper into implementation, you just read this line and go further with your work.
 
 Ability to give method a name gives us one more advantage over traditional constructors. Look at this snippet:
-```Java
+```java
     Time.after("08.05.2019")
 ```
 You wouldn't be able to achieve this with constructors. Why? You simply can't have two constructors with the same signature:
-```Java
+```java
     class Time {
     	public Time(final String until) { 
     	// returns time until given point in time
@@ -45,7 +45,7 @@ Such implementation will not compile, as you have two constructors with the same
 ## #2 - Invoking a factory method does not force a new object construction
 
 When you use a constructor, you always get a new object. This sometimes is not a desirable behaviour. There are some cases when you could save some time by returning previously prepared object instead of always creating a new one. A *Boolean* wrapper class is a good example:
-```Java
+```java
     Boolean.valueOf(true)
 ```
 This always returns exactly the same object instead of creating a new one. This is just a simple example to explain this use case, but this trick can really make a difference when creating instances of your class is costly and time consuming. This may resemble a *Flyweight* pattern which I will discuss in another post.
@@ -53,7 +53,7 @@ This always returns exactly the same object instead of creating a new one. This 
 ## #3 -  An ability to return a subtype
 
 Constructor invocation always return a type of it's class. This makes code less flexible and more tightly coupled to given type. When you use a static factory method, you can return any subclass of given type. It also encourages usage of interfaces which is a good practice. This is commonly used in Java's *Collections* class. In example from below, *Enumeration* is an interface and *EmptyEnumeration* is one of it's implementations. Public static factory method returns a subtype of *Enumeration* and it's clients don't have to care about it's implementation or even know what type is exactly returned.
-```Java
+```java
     public class Collections {
         .
         .
@@ -93,7 +93,7 @@ You simply can't extend a class that has hidden constructors. For example, none 
 ## #2 - Static factory method are mixed up with standard static methods
 
 Sometimes you are not aware that method that is suggested in your IDE is in fact a factory method. They are not as distinct as constructors and can be overlooked. Fortunately, there are some naming conventions that helps with that - you often see static factory methods with names like *from*, *of*, *instance*, *newInstance* etc.
-```Java
+```java
     final Date date = Date.from(instant);
 ```
 ## #3 - It requires some effort and additional code
