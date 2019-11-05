@@ -1,0 +1,241 @@
+---
+title: Abstract Factory pattern
+date: 2019-11-06T00:11:32+01:00
+---
+In [Factory Method post](/posts/factory-method) we took a look at the [Factory Method](/posts/factory-method) pattern. In this post, we'll jump to another design
+pattern - the Abstract Factory, which often relies heavily on[Factory Methods](/posts/factory-method).
+
+## Definition
+The definition from [Gang Of Four](https://en.wikipedia.org/wiki/Design_Patterns) is as follows:
+"Provide an interface for creating families of related or dependent objects without specifying their concrete classes.".
+
+What does it mean?
+
+It means that this pattern decouples the client from creating dependant objects and knowing the type of those objects.
+Our client delegates this work to the factory, which is responsible for providing implementations (concrete types) of given interfaces/types.
+The abstract factory is often implemented as a set of [Factory Methods](/posts/factory-method).
+The client then uses the set of objects provided by the [Factory Methods](/posts/factory-method) of given Abstract Factory.
+
+
+## What is the Abstract Factory pattern made of?
+- Abstract Factory - interface providing methods that returns Products
+- AbstractProduct - interface/type returned by Abstract Factory methods. Abstract Factory may have multiple methods that return multiple types e.g. AbstractProductA, AbstractProductB...
+- ConcreteProduct - implementations of AbstractProducts, e.g. ProductAImplementation, ProductBImplementation...
+- ConcreteFactory - implementation of Abstract Factory, that implement methods for returning Products
+
+## When to use the Abstract Factory?
+- when you want to hide implementations of used types and provide only interfaces
+- when you want to delegate creating and composing objects to separate class
+- when you got linked objects or objects that should be used together and you want to enforce it
+- when in your program there are several sets of types that may/should be used together
+
+The consequences
+- hides implementations of Products  
+- makes it easier to enforce using several types together
+- makes it easier to replace sets of types at once
+- makes it harder to add new types to those sets, as it usually involves altering the interface of the factory. After adding a new Product to Factory, all its subclasses need to implement a new method (if the method is abstract/have no default)
+
+Okey, enough theory. Let's take a look at the code examples...
+
+## Implementation
+
+Let's suppose we want to build a PC
+
+```java
+class PC {
+    private final CPU cpu;
+    private final GPU gpu;
+    private final Motherboard motherboard;
+
+    public PC(CPU cpu, GPU gpu, Motherboard motherboard) {
+        this.cpu = cpu;
+        this.gpu = gpu;
+        this.motherboard = motherboard;
+}
+```
+
+The PC, for simplicity, is made of CPU, GPU and Motherboard. As you may already noticed, this is our set of related objects (products).
+
+Let's declare the Products as some abstract type (interface, abstract class - doesn't really matter in this example).
+
+```java
+
+public interface GPU {
+    String getName();
+}
+
+public interface Motherboard {
+    String getName();
+}
+
+public interface CPU {
+    String getName();
+}
+
+```
+
+Again, for simplicity, the only functionality of our Products is to check its name.
+
+Now, we would like to provide a nice interface for building new PCs.
+
+```java
+abstract class PCFactory {
+
+    abstract protected GPU gpu();
+
+    protected CPU cpu() {
+        return new Intel();
+    }
+
+    protected Motherboard motherboard() {
+        return new IntelMotherboard();
+    }
+
+}
+```
+
+This is our factory - as you see, it has methods for creating Products that are needed to assemble a PC. If we want, we can make all the methods in this interface abstract, or, if we are Intel lovers, we can make some default assumptions - in this case by default we return Intel CPU with Intel chipset motherboard. 
+
+Let's implement our concrete Products now:
+
+```java
+public class Intel implements CPU {
+    @Override
+    public String getName() {
+        return "I'm Intel Core i5-9400F";
+    }
+}
+
+public class AMD implements CPU {
+    @Override
+    public String getName() {
+        return "I'm AMD Ryzen 5 1600 3.2GHz";
+    }
+}
+
+public class AMDMotherboard implements Motherboard {
+    @Override
+    public String getName() {
+        return "I have AMD B450 chipset";
+    }
+}
+
+public class IntelMotherboard implements Motherboard {
+    @Override
+    public String getName() {
+        return "I have Intel B360 chipset";
+    }
+}
+
+public class GeForce implements GPU {
+    @Override
+    public String getName() {
+        return "I'm Gigabyte GeForce GTX 1660 OC 6GB GDDR5";
+    }
+}
+
+public class Radeon implements GPU {
+    @Override
+    public String getName() {
+        return "I'm ASRock Radeon RX 580 Phantom Gaming X OC 8GB";
+    }
+}
+```
+We just created our Concrete Products.
+Now, the only thing we are missing are Concrete Factories.
+
+Let's assume that we are not Intel fanobois, so we override the defaults with AMD PC setup
+
+```java
+public class AMDFanboyPCFactory extends PCFactory {
+    @Override
+    protected GPU gpu() {
+        return new Radeon();
+    }
+
+    @Override
+    protected CPU cpu() {
+        return new AMD();
+    }
+
+    @Override
+    protected Motherboard motherboard() {
+        return new AMDMotherboard();
+    }
+}
+```
+
+or, in case we love Intel, we keep the defeault CPU and motherboard and just add a GPU
+
+```java
+public class IntelFanboyPCFactory extends PCFactory {
+    @Override
+    protected GPU gpu() {
+        return new GeForce();
+    }
+}
+```
+
+We got all we need. Let's now take a look at code of client that uses our classes:
+
+```java
+public class Client {
+    public static void main(String[] args) {
+        final Client client = new Client();
+
+        // building PCs
+        final PC AMDFanboiPC = client.build(new AMDFanboyPCFactory());
+        final PC IntelFanboiPC = client.build(new IntelFanboyPCFactory());
+
+        System.out.println("AMD fanboy PC - " + AMDFanboiPC);
+        System.out.println("Intel fanboy PC - " + IntelFanboiPC);
+        // output:
+        // AMD fanboy PC - PC{cpu=I'm AMD Ryzen 5 1600 3.2GHz, 
+        // gpu=I'm ASRock Radeon RX 580 Phantom Gaming X OC 8GB, motherboard=I have AMD B450 chipset}
+
+        // Intel fanboy PC - PC{cpu=I'm Intel Core i5-9400F, 
+        // gpu=I'm Gigabyte GeForce GTX 1660 OC 6GB GDDR5, motherboard=I have Intel B360 chipset}
+    }
+
+    PC build(final PCFactory factory) {
+        return new PC(factory.cpu(), factory.gpu(), factory.motherboard());
+    }
+}
+```
+
+## Conculsions
+As you can see, the only thing needed to create a PC is a PCFactory implementation. The factory is responsible for agregating related objects/objects that should be used together to assemble a PC.
+
+All the benefits we were promised are definitely present. 
+
+## One last last word
+
+To make the client code even more simple we could use another design pattern like Template Method.
+
+This would make this method
+```java
+    PC build(final PCFactory factory) {
+        return new PC(factory.cpu(), factory.gpu(), factory.motherboard());
+    }
+```
+unnecessary. 
+
+The Template Method pattern will be discussed in another post. 
+
+![Patience](../assets/patience.jpg)
+
+For now, without using the Template Method pattern, we could improve the client code by adding one PC constructor:
+```java
+public PC(PCFactory factory) {
+    this.cpu = factory.cpu();
+    this.gpu = factory.gpu();
+    this.motherboard = factory.motherboard();
+}
+```
+
+Then, we could swap *build()* method implmentation to:
+```java
+PC build(final PCFactory factory) {
+    return new PC(factory);
+}
+```

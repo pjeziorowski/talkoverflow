@@ -30,7 +30,6 @@ module.exports = {
     description: `Homepage and blog by Patryk Jeziorowski`,
     pages: [
       {label: 'Posts', path: '/posts'},
-      {label: 'Tips', path: '/tips'},
       {label: 'Notes', path: '/notes'},
     ],
     social: [
