@@ -8,10 +8,9 @@
     "build": "gatsby build"
   },
   "dependencies": {
-    "@material-ui/core": "^4.6.0",
+    "@theme-ui/components": "^0.2.46",
     "gatsby": "^2.17.6",
     "gatsby-plugin-google-analytics": "^2.1.24",
-    "gatsby-plugin-material-ui": "^2.1.6",
     "gatsby-theme-blog": "^1.1.11",
     "gatsby-theme-notes": "^1.0.11",
     "react": "^16.11.0",

@@ -26,7 +26,7 @@ const Pages = ({ pages }) => (
               margin: "0 0",
             }}
           >
-            <Styled.a as={Link} css={{ color: `black` }} to={link.path}>
+            <Styled.a as={Link} to={link.path}>
               {link.label}
             </Styled.a>
           </Styled.li>
