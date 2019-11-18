@@ -15,15 +15,10 @@ export default () => (
     `}
     render={data => (
       <Fragment>
-        Personal blog by{" "}
-        <Styled.a href="http://example.com/">
-          {data.site.siteMetadata.author}
-        </Styled.a>
-        .
+        Hey, I'm <Styled.a href="http://example.com/">{data.site.siteMetadata.author}</Styled.a>
+        . Welcome to my blog.
         <br />
-        Learning by explaining.
-        <br />
-        With some words and code.
+        Enjoy software explained with simple words and code.
       </Fragment>
     )}
   />

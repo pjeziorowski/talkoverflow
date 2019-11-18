@@ -1,16 +1,30 @@
 module.exports = {
   plugins: [
     {
+      resolve: "gatsby-plugin-react-svg",
+      options: {
+        rule: {
+          include: '/assets/svg'
+        }
+      }
+    },
+    {
       resolve: `gatsby-plugin-google-analytics`,
       options: {
         trackingId: "UA-128288379-2",
       },
     },
     {
+      resolve: 'gatsby-plugin-mailchimp',
+      options: {
+          endpoint: 'https://gmx.us5.list-manage.com/subscribe/post?u=9923588ef4183fe0de6e438bf&amp;id=3af4176aa8', 
+      },
+  },
+    {
       resolve: `gatsby-theme-notes`,
       options: {
         mdx: false,
-        basePath: `/notes`,
+        basePath: `/notes`, 
       },
     },
     // fixes double-image problem possibly in gatsby-plugin-mdx
