@@ -27,7 +27,7 @@ export default function LatestPosts() {
     <Box mt={4}>
       <Box css={css({ display: "flex", justifyContent: "space-between" })}>
         <Styled.h2>Latest Articles</Styled.h2>
-        <Styled.a>View all</Styled.a>
+        <Styled.a to="/posts" as={Link}>View all</Styled.a>
       </Box>
       <Box>
         {data.allBlogPost.edges.map(({ node }) => {
