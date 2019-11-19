@@ -1,5 +1,5 @@
 exports.createPages = async function({ actions, graphql }) {
-  const PostTemplate = require.resolve(`gatsby-theme-blog-core/src/templates/posts-query.js`)
+  const PostsTemplate = require.resolve(`./src/templates/tagged-posts-query.js`)
   const toPath = tag => tag.replace(/ /g, "-").toLowerCase()
   const { data } = await graphql(`
     query {
@@ -15,7 +15,7 @@ exports.createPages = async function({ actions, graphql }) {
     if (tag.value) {
       actions.createPage({
         path: `tags/${toPath(tag.value)}`,
-        component: PostTemplate,
+        component: PostsTemplate,
         context: { tag: tag.value },
       })
     }
