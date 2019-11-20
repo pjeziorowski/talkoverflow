@@ -1,6 +1,6 @@
 import React from "react"
 import { Link, StaticQuery, graphql } from "gatsby"
-import { Styled } from "theme-ui"
+import { Styled, css } from "theme-ui"
 import Header from "gatsby-theme-blog/src/components/header"
 
 const Pages = ({ pages }) => (
@@ -17,11 +17,11 @@ const Pages = ({ pages }) => (
         {pages.map(link => (
           <Styled.li
             key={link.label}
-            css={{
+            css={css({
               listStyleType: `none`,
               padding: `0 1rem`,
               margin: "0",
-            }}
+            })}
           >
             <Styled.a as={Link} to={link.path}>
               {link.label}
