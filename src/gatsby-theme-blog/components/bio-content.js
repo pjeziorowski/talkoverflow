@@ -15,7 +15,7 @@ export default () => (
     `}
     render={data => (
       <Fragment>
-        Hey, I'm <Styled.a href="http://example.com/">{data.site.siteMetadata.author}</Styled.a>
+        Hey, I'm <Styled.a href="http://github.com/pjeziorowski">{data.site.siteMetadata.author}</Styled.a>
         . Welcome to my blog.
         <br />
         Enjoy software explained with simple words and code.

@@ -3,7 +3,7 @@ import { useStaticQuery, graphql } from "gatsby"
 import { Link } from "gatsby"
 import { Styled, css } from "theme-ui"
 import { Box } from "@theme-ui/components"
-import SEO from "gatsby-theme-blog/src/components/seo"
+import PostList from "./post-list"
 
 export default function LatestPosts() {
   const data = useStaticQuery(graphql`
@@ -16,6 +16,7 @@ export default function LatestPosts() {
             date(formatString: "MMMM DD, YYYY")
             excerpt
             keywords
+            tags
             slug
           }
         }
@@ -32,34 +33,7 @@ export default function LatestPosts() {
         </Styled.a>
       </Box>
       <Box>
-        {data.allBlogPost.edges.map(({ node }) => {
-          const title = node.title || node.slug
-          const keywords = node.keywords || []
-          return (
-            <Fragment key={node.slug}>
-              <SEO title="Home" keywords={keywords} />
-              <div>
-                <Styled.h2
-                  css={css({
-                    mb: 1,
-                  })}
-                >
-                  <Styled.a
-                    as={Link}
-                    css={css({
-                      textDecoration: `none`,
-                    })}
-                    to={node.slug}
-                  >
-                    {title}
-                  </Styled.a>
-                </Styled.h2>
-                <small>{node.date}</small>
-                <Styled.p>{node.excerpt}</Styled.p>
-              </div>
-            </Fragment>
-          )
-        })}
+        <PostList posts={data.allBlogPost.edges} />
       </Box>
     </Box>
   )

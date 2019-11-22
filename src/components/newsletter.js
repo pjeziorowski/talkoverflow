@@ -46,7 +46,7 @@ export default function Newsletter() {
               />
             </Box>
             <Box p={2} mt={3} sx={{ display: "flex", flexGrow: "1", alignItems: "center" }}>
-              <Button sx={{ width: "100%" }}>{processing ? "Processing" : "Subscribe!"}</Button>
+              <Button sx={{ width: "100%", color: '#333333' }}>{processing ? "Processing" : "Subscribe!"}</Button>
             </Box>
           </Flex>
         </Box>
