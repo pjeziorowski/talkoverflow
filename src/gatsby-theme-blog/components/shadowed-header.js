@@ -1,4 +1,8 @@
+/* 
+This component is copied to remove changing the colour of site title on root path
+*/
 import React from "react"
+
 import { Link } from "gatsby"
 import { css, useColorMode, Styled } from "theme-ui"
 import Switch from "gatsby-theme-blog/src/components/switch"
@@ -8,7 +12,7 @@ import moon from "gatsby-theme-blog/assets/moon.png"
 
 const rootPath = `${__PATH_PREFIX__}/`
 
-const Title = ({ children, location }) => (
+const Title = ({ children }) => (
       <Styled.h3
         as="p"
         css={css({

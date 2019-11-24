@@ -1,8 +1,9 @@
 import React, { Fragment } from "react"
-import { useStaticQuery, graphql } from "gatsby"
-import { Link } from "gatsby"
+
+import { useStaticQuery, graphql, Link } from "gatsby"
 import { Styled, css } from "theme-ui"
 import { Box } from "@theme-ui/components"
+
 import PostList from "./post-list"
 
 export default function LatestPosts() {
@@ -25,7 +26,7 @@ export default function LatestPosts() {
   `)
 
   return (
-    <Box>
+    <Fragment>
       <Box css={css({ display: "flex", justifyContent: "space-between" })}>
         <Styled.h2>Latest Articles</Styled.h2>
         <Styled.a to="/posts" as={Link}>
@@ -35,6 +36,6 @@ export default function LatestPosts() {
       <Box>
         <PostList posts={data.allBlogPost.edges} />
       </Box>
-    </Box>
+    </Fragment>
   )
 }

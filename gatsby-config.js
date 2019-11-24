@@ -1,14 +1,6 @@
 module.exports = {
   plugins: [
     {
-      resolve: "gatsby-plugin-react-svg",
-      options: {
-        rule: {
-          include: '/assets/svg'
-        }
-      }
-    },
-    {
       resolve: `gatsby-plugin-google-analytics`,
       options: {
         trackingId: "UA-128288379-2",

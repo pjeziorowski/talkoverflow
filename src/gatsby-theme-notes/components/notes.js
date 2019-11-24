@@ -1,3 +1,6 @@
+/* 
+Shadowed to add some page description
+*/
 import React from "react"
 
 import DirectoryList from "gatsby-theme-notes/src/components/directory-list"

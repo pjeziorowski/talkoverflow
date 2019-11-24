@@ -1,4 +1,5 @@
 import React from "react"
+
 import { useStaticQuery, graphql, Link } from "gatsby"
 import { Styled } from "theme-ui"
 import { Badge, Heading } from "@theme-ui/components"

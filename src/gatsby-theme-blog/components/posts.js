@@ -1,8 +1,12 @@
+/* 
+This component is shadowed to add tag cloud and newsletter on posts page
+*/
 import React from "react"
 
 import { Box } from "@theme-ui/components"
 import Layout from "gatsby-theme-blog/src/components/layout"
 import Footer from "gatsby-theme-blog/src/components/home-footer"
+
 import Newsletter from "../../components/newsletter"
 import PostList from "../../components/post-list"
 import TagCloud from "../../components/tag-cloud"

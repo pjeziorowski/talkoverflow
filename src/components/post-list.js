@@ -1,7 +1,7 @@
 import React from "react"
+
 import { Link } from "gatsby"
 import { Styled, css } from "theme-ui"
-
 import SEO from "gatsby-theme-blog/src/components/seo"
 import { Badge, Heading, Box } from "@theme-ui/components"
 

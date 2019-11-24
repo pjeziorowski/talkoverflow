@@ -1,4 +1,8 @@
+/* 
+Shadowed to add some margin css to separate directories
+*/
 import React from "react"
+
 import isPresent from "is-present"
 import { Styled, Box } from "theme-ui"
 import { Link } from "gatsby"

@@ -1,6 +1,11 @@
+/* 
+Adds navigation to site header
+*/
 import React from "react"
+
 import { Link, StaticQuery, graphql } from "gatsby"
 import { Styled, css } from "theme-ui"
+
 import Header from "./shadowed-header"
 
 const Pages = ({ pages }) => (
