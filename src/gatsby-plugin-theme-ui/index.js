@@ -3,6 +3,7 @@ import colors from "./colors"
 
 export default {
   ...baseTheme,
+  initialColorModeName: 'dark',
   colors: colors,
   buttons: {
     primary: {

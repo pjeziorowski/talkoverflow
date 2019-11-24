@@ -8,7 +8,7 @@ export default function Newsletter() {
   const { subscribe, processing, subscribed, error } = useMailChimp(name, email)
 
   return (
-    <Card mt={4}>
+    <Card mt={4} mb={4}>
       {subscribed ? (
         <Text p={2}>Thank you for subscribing!</Text>
       ) : (

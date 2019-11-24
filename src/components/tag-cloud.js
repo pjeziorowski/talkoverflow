@@ -26,7 +26,7 @@ export default function TagCloud({ activeTag }) {
     )
     data.allBlogPost.group.forEach(tag => (tag.color = "background"))
     if (tagToHighlight) {
-      tagToHighlight.color = "gray"
+      tagToHighlight.color = "muted"
     }
   }
 
