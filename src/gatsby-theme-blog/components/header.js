@@ -1,7 +1,7 @@
 import React from "react"
 import { Link, StaticQuery, graphql } from "gatsby"
 import { Styled, css } from "theme-ui"
-import Header from "gatsby-theme-blog/src/components/header"
+import Header from "./shadowed-header"
 
 const Pages = ({ pages }) => (
   <div>

@@ -8,7 +8,7 @@ import PostList from "./post-list"
 export default function LatestPosts() {
   const data = useStaticQuery(graphql`
     query LatestPostsQuery {
-      allBlogPost(sort: { fields: [date], order: DESC }, limit: 3) {
+      allBlogPost(sort: { fields: [date], order: DESC }, limit: 5) {
         totalCount
         edges {
           node {
@@ -25,7 +25,7 @@ export default function LatestPosts() {
   `)
 
   return (
-    <Box mt={4}>
+    <Box>
       <Box css={css({ display: "flex", justifyContent: "space-between" })}>
         <Styled.h2>Latest Articles</Styled.h2>
         <Styled.a to="/posts" as={Link}>

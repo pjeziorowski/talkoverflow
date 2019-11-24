@@ -4,6 +4,23 @@ import colors from "./colors"
 export default {
   ...baseTheme,
   colors: colors,
+  buttons: {
+    primary: {
+      color: "background",
+      bg: "primary",
+      "&:hover": {
+        bg: "text",
+        cursor: "pointer",
+      },
+    },
+  },
+  badges: {
+    outline: {
+      color: "primary",
+      bg: "transparent",
+      boxShadow: "inset 0 0 0 1px",
+    },
+  },
   cards: {
     primary: {
       padding: 2,

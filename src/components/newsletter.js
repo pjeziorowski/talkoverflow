@@ -20,11 +20,10 @@ export default function Newsletter() {
           }}
         >
           <Box p={2}>
-            <Heading as="h1">Get exclusive content</Heading>
+            <Heading as="h1">Join the newsletter</Heading>
           </Box>
           <Text p={2}>
-            Join the newsletter to get access to content available for subscribers only. No trashtalk
-            guaranteed - quality stuff only.
+            Get notifications about the newest stuff. No spam guaranteed.
           </Text>
           {error ? (
             <Text sx={{ color: "red" }} p={2}>
@@ -46,7 +45,7 @@ export default function Newsletter() {
               />
             </Box>
             <Box p={2} mt={3} sx={{ display: "flex", flexGrow: "1", alignItems: "center" }}>
-              <Button sx={{ width: "100%", color: '#333333' }}>{processing ? "Processing" : "Subscribe!"}</Button>
+              <Button style={{ width: "100%" }}>{processing ? "Processing" : "Subscribe!"}</Button>
             </Box>
           </Flex>
         </Box>

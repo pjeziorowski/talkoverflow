@@ -1,17 +1,17 @@
 import React from "react"
 import { useStaticQuery, graphql, Link } from "gatsby"
 import { Styled } from "theme-ui"
-import { Card } from "@theme-ui/components"
+import { Badge, Heading } from "@theme-ui/components"
 import { TagCloud as Cloud } from "react-tagcloud"
 
-export default function TagCloud() {
+export default function TagCloud({ activeTag }) {
   const data = useStaticQuery(graphql`
     query AllTags {
       allBlogPost {
         group(field: tags) {
           value: fieldValue
           count: totalCount
-        } 
+        }
       }
     }
   `)
@@ -20,20 +20,41 @@ export default function TagCloud() {
     return `tags/${tag.value.replace(/ /g, "-").toLowerCase()}`
   }
 
-  const customRenderer = tag => (
-    <Card sx={{ display: "inline-block" }}>
+  const adjustTagColors = () => {
+    const tagToHighlight = data.allBlogPost.group.find(
+      tag => tag.value === activeTag
+    )
+    data.allBlogPost.group.forEach(tag => (tag.color = "background"))
+    if (tagToHighlight) {
+      tagToHighlight.color = "gray"
+    }
+  }
+
+  const customRenderer = (tag, size, color) => (
+    <Badge variant="outline" sx={{ backgroundColor: color }} mr={1} mb={1}>
       <Styled.a
         as={Link}
         to={toHref(tag)}
         key={tag.value}
         sx={{
-          display: "inline-block",
+          textDecoration: "none",
+          color: "primary",
         }}
       >
-        {tag.value}
+        <Heading p={1} as="h3">
+          {tag.value}
+        </Heading>
       </Styled.a>
-    </Card>
+    </Badge>
   )
 
-  return <Cloud tags={data.allBlogPost.group} style={{ textAlign: "center" }} renderer={customRenderer} />
+  adjustTagColors()
+  return (
+    <Cloud
+      disableRandomColor
+      shuffle={false}
+      tags={data.allBlogPost.group}
+      renderer={customRenderer}
+    />
+  )
 }

@@ -7,17 +7,20 @@ import Footer from "gatsby-theme-blog/src/components/home-footer"
 import LatestPosts from "../components/latest-posts"
 import TagCloud from "../components/tag-cloud"
 import Newsletter from "../components/newsletter"
-import HackerSVG from "../../content/assets/svg/hacker.svg"
 
 const HomePage = ({ data, location, title }) => (
   <Layout location={location} title={title}>
     <main>
-      <Box style={{ textAlign: "center" }}>
-        <Styled.img style={{ width: "70%", margin: "0" }} src={HackerSVG} />
+      <Box>
+        <Styled.h2>Articles by tag</Styled.h2>
+        <TagCloud />
       </Box>
-      <TagCloud />
-      <LatestPosts />
-      <Newsletter />
+      <Box mt={4}>
+        <LatestPosts />
+      </Box>
+      <Box mt={4}>
+        <Newsletter />
+      </Box>
     </main>
     <Footer socialLinks={data.site.siteMetadata.social} />
   </Layout>

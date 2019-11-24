@@ -3,7 +3,7 @@ import { Link } from "gatsby"
 import { Styled, css } from "theme-ui"
 
 import SEO from "gatsby-theme-blog/src/components/seo"
-import { Badge, Heading, Card } from "@theme-ui/components"
+import { Badge, Heading, Box } from "@theme-ui/components"
 
 const tagToPath = tag => tag.replace(/ /g, "-").toLowerCase()
 
@@ -14,7 +14,7 @@ const PostList = props => {
         const title = node.title || node.slug
         const keywords = node.keywords || []
         return (
-          <Card mb={2} key={node.slug}>
+          <Box mb={2} key={node.slug}>
             <SEO title="Home" keywords={keywords} />
             <Heading
               css={css({
@@ -34,9 +34,9 @@ const PostList = props => {
             <small>{node.date}</small>
             <Styled.div>
               {node.tags.map(tag => (
-                <Badge mr={1}>
+                <Badge mr={1} variant="outline">
                   <Styled.a
-                    css={css({ color: "#333333", textDecoration: "none" })}
+                    css={css({ textDecoration: "none" })}
                     as={Link}
                     to={`tags/${tagToPath(tag)}`}
                   >
@@ -46,7 +46,7 @@ const PostList = props => {
               ))}
             </Styled.div>
             <Styled.p>{node.excerpt}</Styled.p>
-          </Card>
+          </Box>
         )
       })}
     </Styled.div>

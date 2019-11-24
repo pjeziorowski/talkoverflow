@@ -1,10 +1,23 @@
+import React from "react"
 import { graphql } from "gatsby"
-import PostsPage from "gatsby-theme-blog-core/src/components/posts"
 
-export default PostsPage
+import Posts from "../gatsby-theme-blog/components/posts"
+
+export default ({ location, data, pageContext }) => {
+  const { site, allBlogPost } = data
+  return (
+    <Posts
+      location={location}
+      posts={allBlogPost.edges}
+      siteTitle={site.siteMetadata.title}
+      socialLinks={site.siteMetadata.social}
+      tag={pageContext.tag}
+    />
+  )
+}
 
 export const query = graphql`
-query TagAwarePostsQuery ($tag: [String]) {
+  query TagAwarePostsQuery($tag: [String]) {
     site {
       siteMetadata {
         title
@@ -14,7 +27,7 @@ query TagAwarePostsQuery ($tag: [String]) {
         }
       }
     }
-    allBlogPost (
+    allBlogPost(
       sort: { fields: [date, title], order: DESC }
       limit: 1000
       filter: { tags: { in: $tag } }
