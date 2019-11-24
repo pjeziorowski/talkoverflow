@@ -18,7 +18,7 @@ export default function TagCloud({ activeTag }) {
   `)
 
   const toHref = tag => {
-    return `tags/${tag.value.replace(/ /g, "-").toLowerCase()}`
+    return `/tags/${tag.value.replace(/ /g, "-").toLowerCase()}`
   }
 
   const adjustTagColors = () => {
@@ -32,7 +32,7 @@ export default function TagCloud({ activeTag }) {
   }
 
   const customRenderer = (tag, size, color) => (
-    <Badge variant="outline" sx={{ backgroundColor: color }} mr={1} mb={1}>
+    <Badge key={tag.value} variant="outline" sx={{ backgroundColor: color }} mr={1} mb={1}>
       <Styled.a
         as={Link}
         to={toHref(tag)}
@@ -52,6 +52,8 @@ export default function TagCloud({ activeTag }) {
   adjustTagColors()
   return (
     <Cloud
+      maxSize={20}
+      minSize={20}
       disableRandomColor
       shuffle={false}
       tags={data.allBlogPost.group}

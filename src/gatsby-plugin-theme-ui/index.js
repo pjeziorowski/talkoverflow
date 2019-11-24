@@ -3,7 +3,7 @@ import colors from "./colors"
 
 export default {
   ...baseTheme,
-  initialColorModeName: 'dark',
+  useColorSchemeMediaQuery: true,
   colors: colors,
   buttons: {
     primary: {

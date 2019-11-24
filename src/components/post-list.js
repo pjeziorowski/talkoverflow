@@ -34,11 +34,11 @@ const PostList = props => {
             <small>{node.date}</small>
             <Styled.div>
               {node.tags.map(tag => (
-                <Badge mr={1} variant="outline">
+                <Badge key={`${node.slug}-${tag}`} mr={1} variant="outline">
                   <Styled.a
                     css={css({ textDecoration: "none" })}
                     as={Link}
-                    to={`tags/${tagToPath(tag)}`}
+                    to={`/tags/${tagToPath(tag)}`}
                   >
                     {tag}
                   </Styled.a>
