@@ -1,0 +1,156 @@
+---
+title: Adapter pattern
+date: 2019-11-27T00:23:22+01:00
+tags: ["Design Patterns", "Clean Code", "Java", "Gang of Four"]
+---
+## Introduction
+Composite is a structural design pattern used to manipulate a hierarchical collection of primitive and composite objects. It allows to process trees of object uniformly - without having to worry about the concrete type of each object.
+
+The good example of structures that could be represented with a composite are file structures or HTML DOM.
+
+In the file-structure scenario, the files and folders form a tree in which each element (directory or regular file) is treated uniformly.
+
+In general, you can apply this pattern when you deal with tree-like data structure i.e. you got an object of a certain type that may contain other objects of that type.
+
+## Elements
+- Component 
+  - declares the interface of tree elements
+  - allows access to children
+  - optionally allows to access parent
+- Leaf
+  - a component without children
+- Composite
+  - a component that contains children
+- Client
+  - Manipulates the composite using the Component interface
+
+![Composite](../../assets/composite.png)
+
+## Consequences of applying Composite
+- Primitive and compound objects are treated uniformly, anywhere where leaf is needed a composite may be used
+- Client code is easier - the client doesn't care if it works with a leaf or composite
+- You may add another type of Component without clients noticing - they will be treated uniformly
+- The project may become TOO generic - you can't enforce that the components will be only of type that you desire - anyone could provide another implementation of component that is undesirable
+
+## Tips
+Referencing parent in Components - to make it easier to traverse the tree in both directions, you can also add parent reference to the Component interface.
+
+
+Maximizing Component interface - put all possible common features into the Component interface, so that Leafs and Composites can be treated uniformly.
+
+## Code example
+Enough theory - to better understand the pattern, we'll finally write some code. 
+
+This is just a simplified example, designed to demonstrate the main goal of Composite.
+
+We'll build a corpo hierarchy - some managers and developers. For that we'll need our Component:
+
+```java
+public abstract class Employee {
+    private final String name;
+    private final String position;
+    private final List<Employee> subordinates;
+    private Employee boss;
+
+    public Employee(final String name, final String position, final List<Employee> subordinates) {
+        this.name = name;
+        this.position = position;
+        this.subordinates = subordinates;
+        subordinates.forEach(subordinate -> subordinate.assignBoss(this));
+    }
+
+    // Some common business method for Leafs and Composites with default implementation
+    public void doTheWork() {
+        System.out.println("Watch Netflix");
+    }
+
+    private void assignBoss(final Employee boss) {
+        this.boss = boss;
+    }
+
+    ...getters setters toString
+}
+
+```
+This is the class that will represent both Leafs and Composites.
+
+Now, let's create a Leaf - Component without children:
+```java
+public class Developer extends Employee {
+    public Developer(String name) {
+        super(name, "Developer", List.of());
+    }
+
+    // Overriding some business method
+    @Override
+    public void doTheWork() {
+        System.out.println("Browse StackOverflow");
+    }
+}
+```
+
+We also need a Composite - the Manager:
+```java
+public class Manager extends Employee {
+    public Manager(final String name, final List<Employee> subordinates) {
+        super(name, "Manager", subordinates);
+    }
+
+    // Do some business stuff
+    @Override
+    public void doTheWork() {
+        System.out.println("Fill some Excels");
+    }
+}
+```
+This was quite straightforward, so I'll skip discussing the details.
+
+At the end, to show you the idea of Composite design pattern, let's actually use our code
+```java
+public class Client {
+    public static void main(String[] args) {
+        // Creating Developers
+        final Employee jon = new Developer("Jon");
+        final Employee alex = new Developer("Alex");
+        final Employee michael = new Developer("Michael");
+        final Employee joe = new Developer("Joe");
+        final Employee ashley = new Developer("Ashley");
+        final Employee nicole = new Developer("Nicole");
+        final Employee stew = new Developer("Stew");
+        final Employee ragnar = new Developer("Ragnar");
+        final Employee nico = new Developer("Nico");
+
+        // Creating Managers
+        final List<Employee> mikeSubordinates = List.of(joe, alex, nicole, stew);
+        final List<Employee> billSubordinates = List.of(jon, michael, ashley, ragnar, nico);
+        
+        final Employee mike = new Manager("Mike", mikeSubordinates);
+        final Employee bill = new Manager("Bill", billSubordinates);
+
+        // Harry is the boss here
+        final List<Employee> harrySubordiates = List.of(mike, bill);
+        final Employee harry = new Manager("Harry", harrySubordiates);
+
+        // Anyone can do the work :)
+        // the boss
+        harry.doTheWork();
+        // managers
+        mike.doTheWork();
+        bill.doTheWork();
+        // and developers
+        nico.doTheWork();
+        ashley.doTheWork();
+
+        // Let's order subordinates to do the work
+        harry.getSubordinates().forEach(Employee::doTheWork);
+        mike.getSubordinates().forEach(Employee::doTheWork);
+        // We can treat developers like managers - even though they have no subordinates
+        nico.getSubordinates().forEach(Employee::doTheWork);
+    }
+}
+```
+
+## Conclusions
+As you can see, even though the Developer and Manager implementations are different, the Client can use them both uniformly thanks to their common interface(Component - Employee).
+The client can go up and down in the tree levels to get access to the boss and regular developers. 
+Thee tree is easy to traverse and the client doesn't have to care about the type of nodes - this is the essence of Composite.
