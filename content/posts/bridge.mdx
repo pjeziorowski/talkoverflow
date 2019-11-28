@@ -1,0 +1,149 @@
+---
+title: Bridge pattern
+date: 2019-11-28T00:23:22+01:00
+tags: ["Design Patterns", "Clean Code", "Java", "Gang of Four"]
+---
+## Introduction
+Bridge is the last structural design pattern we'll go through in this series. It's quite complex and less commonly used, but it's still good to know.
+
+The main goal of Bridge is to detach the abstraction from implementations.
+
+The common way of describing an abstraction that can have multiple implementations is through inheritance - you create an interface or abstract class to provide the API, and then you extend it in with one or more implementation classes. This is OK, but if you need more flexibility, you can use the Bridge design pattern.
+
+How does the Bridge work?
+
+Let's suppose you decided to add one method to the interface/abstraction. In this case, all classes that implements this abstraction needs to support this. It couples the abstraction with its implementations.
+
+In the bridge pattern, you use composition instead of inheritance to link the abstraction with implementation so that they are decoupled and can be developed and modified separately. Abstraction has its own class hierarchy and implementation have its own, too. Abstraction keep reference to the implementation object and uses it to fulfil promises its promises. 
+
+If you want to extend the abstraction, you extend the Abstraction class and add another method. Existing implementations of previous abstraction are not affected at all. Additionally, Abstraction and implementation can have a completely different interface. Usually, the abstraction defines some high-level API and implementations provide a set of primitive low-level methods that combined can meet abstractions needs.
+
+## Elements
+- {Abstraction} - defines the API interface, keeps a reference to Implementor
+- Refined Abstraction - extends the API defined in Abstraction
+- Implementor - defines the interface of implementation classes. It does not have to be compatible with Abstraction API.
+- Concrete Implementor - implements Implementor
+
+## Structure
+<Image src="../assets/bridge.png" backgroundColor="transparent"/>
+<br/>
+
+## Simple code example
+Let's go through simple code example to show how the bridge pattern can be applied.
+
+First, we declare our Abstraction
+```java
+public abstract class FileSystem {
+    private final FileSystemImpl fileSystemImpl;
+
+    FileSystem(final FileSystemImpl fileSystemImpl) {
+        this.fileSystemImpl = fileSystemImpl;
+    }
+
+    public abstract void listFiles();
+
+    public abstract void createFile(final String name);
+
+    public abstract void deleteFile(final String name);
+
+    FileSystemImpl getFileSystemImpl() {
+        return fileSystemImpl;
+    }
+}
+```
+The API defines a few methods to operate on files and keeps a reference to FileSystemImpl - the Implementor type.
+
+We need the Implementor:
+```java
+public interface FileSystemImpl {
+    void createFile(final String name);
+    void deleteFile(final String name);
+    void printFiles();
+}
+```
+Implementor is an interface that will help the Abstraction to do the work.
+
+Let's provide a few implementations of FileSystemImpl:
+```java
+public class LinexFileSystem implements FileSystemImpl {
+    @Override
+    public void createFile(String name) {
+        System.out.println("Created file " + name + " in Linex file system");
+    }
+
+    @Override
+    public void deleteFile(String name) {
+        System.out.println("Deleted file " + name + " in Linex file system");
+    }
+
+    @Override
+    public void printFiles() {
+        System.out.println("Printed files in Linex file system");
+    }
+}
+
+public class WidewsFileSystem implements FileSystemImpl {
+    @Override
+    public void createFile(String name) {
+        System.out.println("Created file " + name + " in Widews file system");
+    }
+
+    @Override
+    public void deleteFile(String name) {
+        System.out.println("Deleted file " + name + " in Widews file system");
+    }
+
+    @Override
+    public void printFiles() {
+        System.out.println("Printed files in Widews file system");
+    }
+}
+```
+
+The two classes above are just dummy implementations of our Implementor.
+
+The last thing we can do is to extend the Abstraction and make use of our implementors:
+
+```java
+public class BasicFileSystem extends FileSystem {
+    BasicFileSystem(FileSystemImpl fileSystemImpl) {
+        super(fileSystemImpl);
+    }
+
+    @Override
+    public void listFiles() {
+        getFileSystemImpl().printFiles();
+    }
+
+    @Override
+    public void createFile(String name) {
+        getFileSystemImpl().createFile(name);
+    }
+
+    @Override
+    public void deleteFile(String name) {
+        getFileSystemImpl().deleteFile(name);
+    }
+}
+```
+
+BasicFileSystem extends Abstraction and in overriden methods uses given implementor to do the work.
+
+Our clients can now use our code as follows:
+```java
+public class Client {
+    public static void main(String[] args) {
+        final FileSystemImpl fileSystem = System.getenv("SYSTEM").equals("LINEX") ?
+                new LinexFileSystem() : new WidewsFileSystem();
+
+        final FileSystem fs = new BasicFileSystem(fileSystem);
+
+        fs.createFile("test.txt");
+        // OUTPUT: Created file test.txt in Linex file system
+    }
+}
+```
+
+Using bridge pattern we decoupled abstraction from implementations. We provide inheritance-like behaviour using composition.
+If we need we also could choose implementation during the runtime, which is more elastic than doing it statically using the inheritance.
+<Image src="../assets/bridge-comparison.png" backgroundColor="transparent"/>
