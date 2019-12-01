@@ -1,0 +1,104 @@
+---
+title: Proxy pattern
+date: 2019-12-1T11:17:00+01:00
+tags: ["Design Patterns", "Clean Code", "Java", "Gang of Four"]
+---
+## Introduction
+Proxy pattern is quite common and easy to understand. Proxy is an object that controls access to other object (Subject). It implements the same interface as the subject so that their API is compatible. 
+
+## When to use Proxy?
+You can make use of proxy in several situations. If Subject object construction is a costly operation, you can use a proxy to apply a kind of 'lazy loading'. You may also want to restrict access to some parts of the code - proxy can control the access to sensitive parts of Subject.
+These, of course, are not the only situations where proxies can be used. Proxies are used heavily in frameworks, for example in Mockito or Spring.
+
+## Structure
+<Image src="../assets/proxy.png" backgroundColor="transparent"/>
+<br />
+
+## Elements
+- Subject - defines the interface of the object to be wrapped
+- RealSubject - real implementation of Subject
+- Proxy 
+  - keeps reference to some RealSubject
+  - implements Subject interface so it can be used anywhere RealSubject is used
+  - controls access to RealSubject
+  - can hold some additional metadata about RealSubject
+  - invokes RealSubject methods if needed
+
+## Simple code example
+Our Subject will be some very important person
+```java
+public interface VIP {
+    void shine();
+}
+```
+
+And a concrete example of a VIP is
+```java
+public class KeanuReeves implements VIP {
+    @Override
+    public void shine() {
+        System.out.println("You are awesome!!!");
+    }
+}
+```
+
+We have to protect our VIP from thousands of fans, so we'll add a proxy:
+
+```java
+import java.util.Random;
+
+public class VIPBodyGuard implements VIP {
+
+    private final VIP realVip;
+
+    public VIPBodyGuard(final VIP realVip) {
+        this.realVip = realVip;
+    }
+
+    @Override
+    public void shine() {
+        if (hasGoodMood()) {
+            realVip.shine();
+        } else {
+            System.out.println("F*** off");
+        }
+    }
+
+    private boolean hasGoodMood() {
+        return new Random().nextInt(2) == 1;
+    }
+}
+```
+
+If the guard has a good mood, he will allow the VIP to shine, otherwise, he'll tell fans to... go away.
+
+Let's see our classes in action
+```java
+public class Fan {
+    public static void main(String[] args) {
+        final VIP keanuReeves = new VIPBodyGuard(new KeanuReeves());
+
+        for (int i = 0; i < 10; i++) {
+            keanuReeves.shine();
+        }
+    }
+    // POSSIBLE OUTPUT:
+    // F*** off
+    // F*** off
+    // F*** off
+    // F*** off
+    // F*** off
+    // F*** off
+    // You are awesome!!!
+    // You are awesome!!!
+    // F*** off
+    // You are awesome!!!
+}
+```
+
+## Conclusions
+This is the most basic form of proxy to give you the idea about the proxy design pattern. 
+
+There are many variations of this pattern - RealSubject may be instantiated internally (not passed via constructor) or its type may be determined using Class input parameter etc.
+
+Depending on the situation, you have to decide what will suit you best and adjust the pattern to your case.
