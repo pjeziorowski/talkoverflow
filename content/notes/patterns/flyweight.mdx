@@ -1,0 +1,139 @@
+---
+title: Flyweight
+date: 2019-12-02T00:20:22+02:00
+tags: ["Design Patterns", "Clean Code", "Java", "Gang of Four"]
+---
+## Introduction
+Flyweight is the last structural pattern we'll go through in this series. Its purpose is to share the common part of objects when multiple instances of a given type are created. 
+
+In this pattern, you divide the object state to internal and external. The internal state is common and is represented by one shared object. External state is the context that needs to be provided from external source and is what differentiate the objects.
+
+The pattern is useful when tons of instances of a given type are created. For example, you let's assume you have a word document with millions of characters. Creating a million char objects would be extremely costly. To reduce that cost, we can share the common part - for example, each 'A' letter will share one graphical representation object. That object will be used by every 'A' character in the document. Additional information, like the position of the letter, will be stored externally. Thanks to this, instead of duplicating the common part of letters in thousands of objects, we create one shared-data container per letter, and we reuse it in every place given letter is used.
+
+## When to use?
+- when you create REALLY big number of objects. 
+- when shared part of objects can be determined and extracted
+
+## Important notes
+- The more objects reuse the common part, the more memory is saved. 
+- The more shared data is stored in common objects, the more memory is saved.
+
+## How to implement
+In this example, we'll create a simple class structure for NPCs in a RPG game.
+
+First, we create an interface for our NPCs
+```java
+public interface NPC {
+    void attack(final NPC npc);
+}
+```
+Our NPC capabilities are quite limited, but that's enough in this example.
+
+Now, let's implement NPC
+```java
+public class DefaultNpcImpl implements NPC {
+    private final String id;
+    private final Type type;
+
+    public DefaultNpcImpl(final String id, final Type type) {
+        this.id = id;
+        this.type = type;
+    }
+
+    @Override
+    public void attack(final NPC npc) {
+        System.out.println(type.getName() + " attacked " + npc + " and did " + type.getDamage() + " damage with " + type.getWeapon());
+    }
+}
+```
+```java
+public class Type {
+    private final String name;
+    private final String weapon;
+    private final int maxHealth;
+    private final int damage;
+    private final int level;
+
+    public Type(final String name, final String weapon, final int maxHealth, final int damage, final int level) {
+        this.name = name;
+        this.weapon = weapon;
+        this.maxHealth = maxHealth;
+        this.damage = damage;
+        this.level = level;
+    }
+    // getters, hashCode$equals
+}
+```
+
+We noticed that some field values will repeat often, so we extracted them as Type class (this is our Flyweight). 
+
+Default NPC implementation contains Type (Flyweight) and external, unshared data - id.
+
+Now, let's implement the factory
+```java
+public class NPCFactory {
+    private final List<Type> types;
+
+    public NPCFactory() {
+        types = new ArrayList<>();
+    }
+
+    public NPC create(final Type type, final String id) {
+        if (types.contains(type)) {
+            return new DefaultNpcImpl(id, types.get(types.indexOf(type)));
+        }
+
+        types.add(type);
+
+        return new DefaultNpcImpl(id, type);
+    }
+}
+```
+
+The factory is a simple cache of types - if give type is already registered, the factory reuses the type.
+If type given as argument is not yet registered, it's added to the cache.
+
+At the end, a new NPC with shared Type is returned.
+
+We are done with our design - let's now use it in a 'RPG game'.
+
+```java
+package flyweight;
+
+public class RPGGame {
+    public static void main(String[] args) {
+        final Type orc = new Type("Orc", "axe", 350, 60, 1);
+        final Type ogre = new Type("Ogre", "stone", 500, 50, 1);
+        final Type accidentalOrcDuplicate = new Type("Orc", "axe", 350, 60, 1);
+
+        final NPCFactory factory = new NPCFactory();
+
+        final NPC orc1 = factory.create(accidentalOrcDuplicate, String.valueOf(System.nanoTime()));
+        final NPC orc2 = factory.create(orc, String.valueOf(System.nanoTime()));
+        final NPC orc3 = factory.create(orc, String.valueOf(System.nanoTime()));
+        final NPC ogre1 = factory.create(ogre, String.valueOf(System.nanoTime()));
+
+        System.out.println(orc1);
+        System.out.println(orc2);
+        System.out.println(orc3);
+        System.out.println(ogre1);
+
+        orc1.attack(ogre1);
+        // OUTPUT:
+        // DefaultNpcImpl{name=Orc, id='3936795903076', type=flyweight.Type@c910dab4}
+        // DefaultNpcImpl{name=Orc, id='3936796930645', type=flyweight.Type@c910dab4}
+        // DefaultNpcImpl{name=Orc, id='3936796953956', type=flyweight.Type@c910dab4}
+        // DefaultNpcImpl{name=Ogre, id='3936796957682', type=flyweight.Type@871291c8}
+        // Orc attacked DefaultNpcImpl{name=Ogre, id='3936796957682', type=flyweight.Type@871291c8} and did 60 damage with axe
+    }
+}
+```
+## Conclusions
+First, we create two types - orc and ogre. Orc type is 'accidentaly' duplicated in accidentalOrcDuplicate object.
+
+Then, we create a factory and use it to create monsters. ID of NPCs is generated from current time for this simple example.
+
+When we look at the output of this code, we see that even though we duplicated orc type, the actual used Type by all orcs is exactly the same object - type=flyweight.Type@c910dab4.
+This is ensured by factory and its type cache.
+
+If we created thousands of monsters in our RPG game, thanks to the flyweight we would save loooots of memory.
