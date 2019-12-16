@@ -1,0 +1,241 @@
+## Introduction
+The Mediator pattern defines a class that encapsulates information about interactions between objects from a given set.
+
+It helps maintain loose coupling because it prevents dependant objects from direct communication.
+
+## When to use?
+- when you got a set of objects that communicate with each other and it's hard to manage their connections
+- when reusing object is hard because it's dependant on many other objects
+
+## Elements
+- Mediator - defines the interface to communicate with peers
+- ConcreteMediator - coordinates objects, knows their relations and manages them
+- Colleague - knows the Mediator, communicates with it instead of with other Colleagues
+
+## Coordination
+Colleagues use the Mediator to communicate. Mediator knows their relations and is responsible for managing their communication.
+
+Mediator may resemble the Facade pattern. Both patterns wraps a set of objects/services to provide a higher-level functionality. However, the Facade is used to gather and simplify the API of many services while the Mediator controls and manages their communication. They may seem similar, but their purpose is very different.
+
+## Consequences
+Colleagues are more reusable as they have less dependencies.
+Loose coupling replaces many-to-many relations between Colleagues into one-to-many relations between Mediator and Colleagues, which is usually easier to maintain.
+Mediator pattern encapsulates objects communication logic into a separate class, but with time it may become a heavy monolith.
+
+## How to manage the communication between Colleagues?
+- you can implement mediator as an Observator
+- you can add an interface to Mediator that enables colleagues to communicate more directly
+
+## Code example
+After reading the theory we can finally do some coding.
+
+We'll use Mediator pattern as well as Observator-like exchange of messages between interested components
+to decouple our classes and make them not knowing about each other existence.
+
+First, let's add a Message class that will be used in communication between Colleagues.
+
+```java
+class Message {
+ private final Topics topic;
+ private final String value;
+
+ Message(final Topics topic, final String content) {
+ this.topic = topic;
+ this.value = content;
+ }
+
+ Topics getTopic() {
+ return topic;
+ }
+
+ String value() {
+ return value;
+ }
+}
+```
+
+Message has value and Topic:
+
+```java
+public enum Topics {
+ USER_REGISTERED, EMAIL_SENT, ALL_TOPICS
+}
+```
+
+Topic is just an enum that is used to group messages.
+
+Let's now create an abstract Colleague:
+
+```java
+abstract class Colleague {
+ private final Mediator mediator;
+
+ Colleague(final Mediator mediator) {
+ this.mediator = mediator;
+ }
+
+ abstract void receive(final Message message);
+
+ abstract List<Topics> interests();
+
+ void send(final Message message) {
+ mediator.send(message, this);
+ }
+}
+```
+
+Colleague keeps a reference to the Mediator and uses it to send messages.
+
+It also defines the API for receiving messages and its interests (Topics it is interested in).
+
+Finally, we can add a few concrete Colleagues. For simplicity, we'll skip adding their Interfaces and we'll
+jump straight into creating concrete classes (you could define separate Interface for each Colleague).
+
+```java
+public class UserRegistrationService extends Colleague {
+ final List<Topics> INTERESTS = List.of();
+
+ UserRegistrationService(final Mediator mediator) {
+ super(mediator);
+ }
+
+ void registerUser(final String username) {
+ // do some business logic...
+
+ // then...
+ System.out.println(username + " registered!");
+ send(new Message(Topics.USER_REGISTERED, username));
+ }
+
+ @Override
+ public void receive(final Message message) {
+ // not listening yet
+ }
+
+ @Override
+ public List<Topics> interests() {
+ return INTERESTS;
+ }
+}
+```
+
+Our service for registering users is not interested in any topic - it just uses the Mediator to inform others
+about user registration event.
+
+Let's add another concrete Colleague:
+
+```java
+class ConfirmEmailService extends Colleague{
+ private final List<Topics> INTERESTS = List.of(Topics.USER_REGISTERED);
+
+ ConfirmEmailService(final Mediator mediator) {
+ super(mediator);
+ }
+
+ @Override
+ void receive(final Message message) {
+ System.out.println("Sending confirmation email to " + message.value());
+ sendConfirmationEmail(message.value());
+ }
+
+ private void sendConfirmationEmail(final String user) {
+ // here email was sent... and then:
+ send(new Message(Topics.EMAIL_SENT, "confirming " + user + " email"));
+ }
+
+ @Override
+ List<Topics> interests() {
+ return INTERESTS;
+ }
+}
+```
+
+This Colleague is interested in USER_REGISTERED events and sends confirmation emails.
+
+After sending the email, it uses the Mediator to notify others about email sent event.
+
+Let's add one more Colleague:
+
+```java
+class AuditLoggingService extends Colleague {
+ AuditLoggingService(final Mediator mediator) {
+ super(mediator);
+ }
+
+ @Override
+ void receive(final Message message) {
+ System.out.println("Saved event - " + message.getTopic() + " : " + message.value());
+ }
+
+ @Override
+ List<Topics> interests() {
+ return List.of(Topics.ALL_TOPICS);
+ }
+}
+```
+
+This one is interested in all topics to store events that happen in the system.
+
+Let's now take a look at the Mediator implementation and how it coordinates the communication of Colleagues:
+
+```java 
+class Mediator {
+ private final List<Colleague> colleagues;
+
+ Mediator() {
+ this.colleagues = new ArrayList<>();
+ }
+
+ void send(final Message message, final Colleague source) {
+ colleagues.stream()
+ .filter(colleague -> colleague.interests().contains(Topics.ALL_TOPICS) || colleague.interests().contains(message.getTopic()))
+ .filter(colleague -> !(colleague == source))
+ .forEach(colleague -> colleague.receive(message));
+ }
+
+ void add(final Colleague colleague) {
+ colleagues.add(colleague);
+ }
+}
+```
+
+The Mediator stores a list of Colleagues. In `send()` method, it goes through that list and notifies Colleagues about Messages they're interested in:
+- it doesn't send the message to the message source.
+- it sends all messages to colleague that is interested in `ALL_TOPICS`
+- otherwise, it sends the message only if the Colleague's list of interests contains message's topic
+
+Now we'll make a use of our Mediator:
+
+```java
+public class Example {
+ public static void main(String[] args) {
+ final Mediator mediator = new Mediator();
+
+ final ConfirmEmailService confirmEmailService = new ConfirmEmailService(mediator);
+ final UserRegistrationService userRegistrationService = new UserRegistrationService(mediator);
+ final AuditLoggingService auditLoggingService = new AuditLoggingService(mediator);
+
+ mediator.add(confirmEmailService);
+ mediator.add(userRegistrationService);
+ mediator.add(auditLoggingService);
+
+ userRegistrationService.registerUser("alex123");
+ }
+}
+```
+
+OUTPUT:
+
+```
+alex123 registered!
+Sending confirmation email to alex123
+Saved event - EMAIL_SENT : confirming alex123 email
+Saved event - USER_REGISTERED : alex123
+```
+
+## Conclusion
+Using the Mediator pattern, we were able to coordinate the communication between many services to provide business value.
+Our services do not know about each other existence - they do their thing and use mediator to notify others.
+They don't care if someone listens for those messages anyways.
+
+Thanks to that, we created loosely coupled code. Services have less dependencies and are more reusable.

@@ -1,0 +1,80 @@
+Strategy is a behavioural pattern that defines an API for a family of algorithms that can be interchangeable.
+
+## When to use
+- when you need different versions of a given algorithm
+- when you want to encapsulate code of given family of algorithms
+
+## Structure
+<Image src="../../assets/strategy.png" alt="stretegy pattern structure" />
+
+<br />
+
+## Elements
+- Strategy - defines the API of family of algorithms
+- ConcreteStragegy - implementation of given Strategy
+- Context - is configured by concrete strategy, keeps a reference to strategy
+
+## Cooperation
+Clients usually create a concrete strategy and pass it to the Context.
+Context uses Strategy and gives it all needed data to complete the algorithm.
+
+## Consequences
+- creates a family of related algorithms
+- is an alternative for creating subclasses of context to provide different implementation of algorithm
+- enables changing implementation during the runtime
+- the client has to know possible strategies
+
+## Simple code example
+Strategy pattern is very easy to implement. All you need to do is to provide some abstraction and use inheritance to implement it.
+Then, the client can use any implementation of that abstraction.
+
+Let's first declare our abstraction:
+
+```java
+public interface Abstraction {
+    void saySomething();
+}
+```
+
+In next step we'll provide two implementations:
+
+```java
+public class SillyImplementation implements Abstraction{
+    @Override
+    public void saySomething() {
+        System.out.println("Chuck Norris simply walks into Mordor");
+    }
+}
+
+public class SmartImplementation implements Abstraction {
+    @Override
+    public void saySomething() {
+        System.out.println("Great spirits have always encountered violent opposition from mediocre minds");
+    }
+}
+```
+
+We implemented the abstraction twice - first implementation prints some silly Chuck Norris joke and the second a quote of Albert Einstein.
+
+Now, both implementations can be used in the place of abstraction in the client code:
+
+```java
+public class Client {
+    public static void main(String[] args) {
+        Abstraction abstraction = new SillyImplementation();
+
+        abstraction.saySomething();
+
+        abstraction = new SmartImplementation();
+
+        abstraction.saySomething();
+    }
+}
+```
+
+Output:
+
+```
+Chuck Norris simply walks into Mordor
+Great spirits have always encountered violent opposition from mediocre minds
+```

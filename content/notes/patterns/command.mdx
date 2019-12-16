@@ -1,0 +1,167 @@
+## Introduction
+Command design pattern encapsulates executing application logic in the form of object. It enables parametrizing clients with various Commands and storing them in queues and registries. It also enables reverting actions.
+
+A good example for a case where Command pattern could be used is an UI library. When you're creating a Button, you don't know what action should be executed on click. The action is specified later on by the user of the library. The button can be parametrized with Command and perform the business logic provided by the user of the UI library.
+
+## When to use
+- to parametrize objects with executable tasks
+- to enable reverting actions
+- to implement event registry
+
+## Structure 
+
+<Image src="../../assets/command.png" alt="Command pattern structure" />
+<br />
+
+## Elements
+- Command - declares the interface for executing actions
+- ConcreteCommand - implements the Execute method using Receiver
+- Client - creates ConcreteCommands and assigns them to Receivers
+- Invoker - requests executing Commands
+- Receiver - is used by Commands to execute application logic.
+
+## Cooperation 
+The client creates a ConcreteCommand and assigns it to the Receiver. Invoker stores the ConcreteCommand. Invoker requests action by executing the Execute method of the ConcreteCommand. ConcreteCommand uses Receiver to do the hard work.
+
+## Consequences
+Command separates the object that invokes the action from the object that is actually doing the work.
+Commands can be grouped up into compound commands.
+Adding a new Commands is easy as you don't have to modify any existing code.
+
+## Code example
+Let's demonstrate the Command pattern with a simple example - we'll create a TV with remote control.
+
+First, we'll declare required interfaces:
+```java
+public interface TV {
+    void turnOn();
+    void turnOff();
+    void setChannel(final int number);
+}
+
+public interface Remote {
+    Remote press();
+    Remote select(final Command command);
+}
+
+public interface Command {
+    void execute();
+}
+```
+
+Now we'll implement the remote
+```java
+public class RemoteControl implements Remote {
+    private Command command;
+
+    @Override
+    public Remote press() {
+        command.execute();
+        return this;
+    }
+
+    @Override
+    public Remote select(final Command command) {
+        this.command = command;
+        return this;
+    }
+}
+```
+
+The implementation is simple - we can select command and press a button.
+
+Now it's time to implement the TV:
+```java
+public class TVImpl implements TV {
+    @Override
+    public void turnOn() {
+        System.out.println("TV turned on");
+    }
+
+    @Override
+    public void turnOff() {
+        System.out.println("TV Turned off");
+    }
+
+    @Override
+    public void setChannel(int number) {
+        System.out.println("Selected channel " + number);
+    }
+}
+```
+
+and commands:
+```java
+class TVOff implements Command {
+    private final TV tv;
+
+    public TVOff(final TV tv) {
+        this.tv = tv;
+    }
+
+    @Override
+    public void execute() {
+        tv.turnOff();
+    }
+}
+
+class TVOn implements Command {
+    private final TV tv;
+
+    public TVOn(final TV tv) {
+        this.tv = tv;
+    }
+
+    @Override
+    public void execute() {
+        tv.turnOn();
+    }
+}
+
+class SelectChannel implements Command {
+    private final TV tv;
+    private final int channelNumber;
+
+    public SelectChannel(final TV tv, final int channelNumber) {
+        this.tv = tv;
+        this.channelNumber = channelNumber;
+    }
+
+    @Override
+    public void execute() {
+        tv.setChannel(channelNumber);
+    }
+}
+```
+
+Commands use Receiver (TV) to execute appropriate business logic.
+
+We got everything we need - let's make a use of our code:
+
+```java
+public class Example {
+    public static void main(String[] args) {
+        final TV tv = new TVImpl();
+        final Remote remoteControl = new RemoteControl();
+
+        final Command tvOff = new TVOff(tv);
+        final Command tvOn = new TVOn(tv);
+        final Command channel1 = new SelectChannel(tv, 1);
+        final Command channel69 = new SelectChannel(tv, 69);
+
+        remoteControl.select(tvOn).press().select(channel1).press().select(channel69).press().select(tvOff).press();
+    }
+}
+```
+
+In this example, we first create a TV and Remote with some Commands.
+
+Then, we parametrize the remote with commands and use `press()` method to execute them.
+
+Here's the output of the program:
+```
+TV turned on
+Selected channel 1
+Selected channel 69
+TV Turned off
+```

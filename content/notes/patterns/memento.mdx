@@ -1,0 +1,158 @@
+## Introduction
+Memento is a behavioural design pattern that saves the object's inner state in a separate outer object without revealing it's implementation details, which enables reverting state.
+
+## When to use?
+- when you need to save a snapshot of state to make it possible to revert to this point of later on
+AND when you want to hide implementation details while exposing inner state to the outer world
+
+## Structure 
+<Image src="../../assets/memento.png" alt="Memento design pattern structure" />
+
+<br />
+
+## Elements
+- Memento 
+  - stores inner state of Originator
+  - protects access to data (Originator has access to broader interface than the rest of the world)
+- Originator - creates Memento, uses it to revert state
+- Caretaker - manages the Memento, can ask for reverting state, never looks into the inner state of Memento
+
+## Cooperation
+Caretaker requests a Memento. Originator creates the Memento and gives it to the Caretaker,
+Caretaker can request reverting state to given Memento.
+
+## Consequences 
+Encapsulates the inner state in separate object, enables reverting state.
+
+## Simple code example
+We'll write some really simple code to show the idea of Memento pattern.
+
+First, we'll add a Content class that stores a String value.
+
+```java
+public class Content {
+ private String text = "";
+
+ Content(final String content) {
+ this.text = content;
+ }
+
+ Content() { }
+
+ void add(final String text) {
+ this.text = this.text + " " + text;
+ }
+
+ @Override
+ public String toString() {
+ return text;
+ }
+}
+```
+
+This is our Memento that stores the state(text).
+
+Now, let's create a Text class that use the Content.
+
+```java
+public class Text {
+ private Content content = new Content();
+
+ Content snapshot() {
+ return new Content(content.toString());
+ }
+
+ void write(final String text) {
+ content.add(text);
+ }
+
+ void setContent(final Content content) {
+ this.content = content;
+ }
+
+ @Override
+ public String toString() {
+ return content.toString();
+ }
+}
+```
+
+Text class can append text, create a snapshot (Memento) and provides API to reset content.
+
+Now we need the last piece - Caretaker. 
+
+We'll add a TextEditor class that will be managing snapshots.
+
+```java
+public class TextEditor {
+ private final List<Content> snapshots = new ArrayList<>();
+
+ void takeSnapshotOf(final Text originator) {
+ snapshots.add(originator.snapshot());
+ }
+
+ Content getSnapshot(final int index) {
+ return snapshots.get(index);
+ }
+}
+```
+
+It can take a snapshot of Originator and exposes API to fetch it from the list.
+
+Now we got all we need to make use of Memento.
+
+```java
+public class Example {
+ public static void main(String[] args) {
+ {
+ // Create Originator
+ final Text text = new Text();
+ final TextEditor editor = new TextEditor();
+
+ // Ask originator for Memento
+ editor.takeSnapshotOf(text);
+
+ text.write("Writing some random text");
+ System.out.println(text);
+
+ text.write( "one more time");
+ System.out.println(text);
+
+ // Asking for reverting state
+ text.setContent(editor.getSnapshot(0));
+
+ System.out.println("After 1st state revert");
+ System.out.println("\"" + text + "\""); // EMPTY STRING
+
+ text.write("Writing one more time");
+ System.out.println(text);
+
+ // Taking a snapshot
+ System.out.println("Taking snapshot");
+ editor.takeSnapshotOf(text);
+
+ text.write("lololo adding something after taking snapshot");
+ System.out.println(text);
+
+ System.out.println("Using Memento 2nd time");
+ text.setContent(editor.getSnapshot(1));
+ System.out.println(text);
+ }
+ }
+}
+```
+
+Output:
+```text
+ Writing some random text
+ Writing some random text one more time
+After 1st state revert
+""
+ Writing one more time
+Taking snapshot
+ Writing one more time lololo adding something after taking snapshot
+Using Memento 2nd time
+ Writing one more time
+```
+
+As you can see in the output, we were able to easily revert the state. We stored just one string as state, but in a more complicated example, we could put a lot more stuff into Memento.
