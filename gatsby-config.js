@@ -1,3 +1,5 @@
+const rssOptions = require("./rss");
+
 module.exports = {
   plugins: [
     {
@@ -5,6 +7,10 @@ module.exports = {
       options: {
         trackingId: "UA-128288379-2",
       },
+    },
+    {
+      resolve: `gatsby-plugin-feed`,
+      options: rssOptions,
     },
     {
       resolve: 'gatsby-plugin-mailchimp',
@@ -39,6 +45,7 @@ module.exports = {
   siteMetadata: {
     title: `talkoverflow`,
     author: `Patryk Jeziorowski`,
+    siteUrl: 'https://talkoverflow.com',
     description: `Homepage and blog by Patryk Jeziorowski`,
     pages: [
       {label: 'Posts', path: '/posts'},
