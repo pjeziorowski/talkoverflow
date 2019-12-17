@@ -23,12 +23,16 @@ const Footer = ({ previous, next, twitterUrl, githubUrl }) => (
   <footer
     css={css({
       mt: 4,
-      pt: 3,
+      pt: 1,
     })}
   >
-    <Styled.hr />
-    <Bio />
     <SocialLinks twitterUrl={twitterUrl} githubUrl={githubUrl} />{/* Added component */}
+    <Styled.hr
+      css={css({
+        mt: 3,
+      })}
+    />
+    <Bio />
     <Newsletter /> {/* Added component */}
     {(previous || next) && (
       <Flex
