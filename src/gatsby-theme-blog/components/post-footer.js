@@ -8,6 +8,7 @@ import { css, Styled, Flex } from "theme-ui"
 import Bio from "gatsby-theme-blog/src/components/bio"
 import Newsletter from "../../components/newsletter"
 import ExternalLink from "../../components/external-link"
+import TagCloud from "../../components/post-tags"
 
 const SocialLinks = ({ twitterUrl, githubUrl }) => (
   twitterUrl && githubUrl && (
@@ -19,7 +20,7 @@ const SocialLinks = ({ twitterUrl, githubUrl }) => (
   )
 )
 
-const Footer = ({ previous, next, twitterUrl, githubUrl }) => (
+const Footer = ({ previous, next, twitterUrl, githubUrl, tags }) => (
   <footer
     css={css({
       mt: 4,
@@ -27,6 +28,12 @@ const Footer = ({ previous, next, twitterUrl, githubUrl }) => (
     })}
   >
     <SocialLinks twitterUrl={twitterUrl} githubUrl={githubUrl} />{/* Added component */}
+    <Styled.hr
+      css={css({
+        mt: 3,
+      })}
+    />
+    <TagCloud tags={tags}/>{/* Added tagcloud */}
     <Styled.hr
       css={css({
         mt: 3,
