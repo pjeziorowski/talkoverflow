@@ -7,8 +7,19 @@ import { css, Styled, Flex } from "theme-ui"
 
 import Bio from "gatsby-theme-blog/src/components/bio"
 import Newsletter from "../../components/newsletter"
+import ExternalLink from "../../components/external-link"
 
-const Footer = ({ previous, next }) => (
+const SocialLinks = ({ twitterUrl, githubUrl }) => (
+  twitterUrl && githubUrl && (
+    <>
+      <ExternalLink to={twitterUrl}>Discuss on Twitter</ExternalLink>
+      
+      <ExternalLink to={githubUrl}>Edit on Github</ExternalLink>
+    </>
+  )
+)
+
+const Footer = ({ previous, next, twitterUrl, githubUrl }) => (
   <footer
     css={css({
       mt: 4,
@@ -17,6 +28,7 @@ const Footer = ({ previous, next }) => (
   >
     <Styled.hr />
     <Bio />
+    <SocialLinks twitterUrl={twitterUrl} githubUrl={githubUrl} />{/* Added component */}
     <Newsletter /> {/* Added component */}
     {(previous || next) && (
       <Flex
