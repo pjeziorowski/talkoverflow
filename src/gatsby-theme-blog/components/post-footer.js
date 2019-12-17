@@ -13,7 +13,7 @@ const SocialLinks = ({ twitterUrl, githubUrl }) => (
   twitterUrl && githubUrl && (
     <>
       <ExternalLink to={twitterUrl}>Discuss on Twitter</ExternalLink>
-      
+      {` `}&bull;{` `}
       <ExternalLink to={githubUrl}>Edit on Github</ExternalLink>
     </>
   )
