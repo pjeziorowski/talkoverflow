@@ -1,17 +1,18 @@
 ---
 title: Static Factory Methods
-date: 2019-05-08T20:20:22+02:00
+date: 2019-12-17T20:20:22+02:00
 tags: ["Design Patterns", "Clean Code", "Java", "Effective Java"]
 twitterUrl: "https://twitter.com/PJeziorowski/status/1207055972558131202"
 githubUrl: "https://github.com/pjeziorowski/talkoverflow/blob/master/content/posts/static-factory-methods.mdx"
 ---
-The topic of this short article is pretty simple - creation of objects. The most popular basic ways of creating objects in Java are direct constructor invocation and usage of static factory methods (don't confuse with a Factory Method design pattern, which will be discussed in other post). In this article I'll tell you about pros and cons of using static factory methods and  about factors you should consider while designing your classes and APIs.
+# Introduction
+The topic of this short article is pretty simple - __creating objects__. The most popular basic ways of creating objects in Java are direct __constructor invocation__ and usage of __static factory methods__ (don't confuse with a __Factory Method design pattern__, which will be discussed in other post). In this article I'll tell you about pros and cons of using static factory methods and  about factors you should consider while designing your classes and APIs.
 
 # Pros
 
 ## #1 - Static factory methods have names
-
-This may seem trivial, but it really helps designing clean and understandable APIs. Good method name can make your code understandable without looking into documentation or implementation in the code. This is really important, not only when you're writing some popular open source library, but also in your day-to-day work when your colleague tries to reuse or understand a class or service you created. I'll give you one abstract example:
+<!-- TODO Factory Method Post Ref -->
+This may seem trivial, but it really helps designing clean and understandable APIs. __Good method name can make your code understandable without looking into documentation or implementation in the code.__ This is really important, not only when you're writing some popular open source library, but also in your day-to-day work when your colleague tries to reuse or understand a class or service you created. I'll give you one abstract example:
 ```java
     new Time("08.05.2019")
 ```
