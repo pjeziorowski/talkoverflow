@@ -4,14 +4,14 @@ import { Styled, css } from "theme-ui"
 
 import PostFooter from "gatsby-theme-blog/src/components/post-footer"
 import Layout from "gatsby-theme-blog/src/components/layout"
-import SEO from "gatsby-theme-blog/src/components/seo"
+import SEO from "./seo"
 import { MDXRenderer } from "gatsby-plugin-mdx"
 import TagCloud from "../../components/post-tags"
 
 const Post = ({
   data: {
     mdx: {
-      frontmatter: { githubUrl, twitterUrl },
+      frontmatter: { githubUrl, twitterUrl, featuredImage },
     },
     post,
     site: {
@@ -23,7 +23,7 @@ const Post = ({
   next,
 }) => (
   <Layout location={location} title={title}>
-    <SEO title={post.title} description={post.excerpt} />
+    <SEO title={post.title} description={post.excerpt} featuredImage={featuredImage}/>
     <main>
       <Styled.h1
         css={css({

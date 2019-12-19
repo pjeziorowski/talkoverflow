@@ -10,6 +10,7 @@ export const query = graphql`
       frontmatter {
         githubUrl
         twitterUrl
+        featuredImage
       }
     }
     site {
