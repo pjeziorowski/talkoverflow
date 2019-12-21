@@ -1,10 +1,14 @@
+import typography from "gatsby-theme-blog/src/gatsby-plugin-theme-ui/typography"
 import baseTheme from "gatsby-theme-blog/src/gatsby-plugin-theme-ui"
 import colors from "./colors"
+import styles from "./styles"
+import merge from "deepmerge"
 
-export default {
+export default merge(typography, {
   ...baseTheme,
   useColorSchemeMediaQuery: true,
   colors: colors,
+  styles: styles,
   buttons: {
     primary: {
       color: "background",
@@ -35,4 +39,4 @@ export default {
       borderColor: "muted",
     },
   },
-}
+})

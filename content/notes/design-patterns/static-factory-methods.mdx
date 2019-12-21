@@ -1,0 +1,110 @@
+---
+title: Static Factory Methods
+date: 2019-12-17T20:20:22+02:00
+tags: ["Design Patterns", "Clean Code", "Java", "Effective Java"]
+twitterUrl: "https://twitter.com/PJeziorowski/status/1207055972558131202"
+githubUrl: "https://github.com/pjeziorowski/talkoverflow/blob/master/content/posts/static-factory-methods.mdx"
+featuredImage: "https://talkoverflow.com/avatar.png"
+---
+# Introduction
+The topic of this short article is pretty simple - creating objects. The most popular basic ways of creating objects in Java are direct constructor invocation and usage of static factory methods (don't confuse with a Factory Method design pattern, which will be discussed in another post). In this article, I'll tell you about pros and cons of using static factory methods and about factors you should consider while designing your classes and APIs.
+
+# Pros
+
+## #1 - Static factory methods have names
+<!-- TODO Factory Method Post Ref -->
+This may seem trivial, but it helps designing clean and understandable APIs. __Good method name can make your code understandable without looking into documentation or implementation in the code.__ This is really important, not only when you're writing some popular open-source library, but also in your day-to-day work when your colleague tries to reuse or understand a class or service you created. I'll give you one abstract example:
+```java
+ new Time("08.05.2019")
+```
+What does that represent? A certain point in time, a day? And now let's take a look at static factory method equivalent
+```java
+ Time.until("08.05.2019")
+```
+This is much more clear. You don't have to check documentation or look deeper into implementation, you just read this line and go further with your work.
+
+Ability to give method a name gives us one more advantage over traditional constructors. Look at this snippet:
+```java
+ Time.after("08.05.2019")
+```
+You wouldn't be able to achieve this with constructors. Why? You simply can't have two constructors with the same signature:
+```java
+    class Time {
+    	public Time(final String until) { 
+    	// returns time until given point in time
+    	.
+    	.
+    	.
+     } 
+    
+     public Time(final String after) { 
+    	// returns time after given point in time
+    	.
+    	.
+    	.
+     }
+    }
+```
+Such implementation will not compile, as you have two constructors with the same parameters. Using static factory methods gives you an ability to create several factory methods with the same input parameter types without worrying about signature clashes thanks to method naming.
+
+## #2 - Invoking a factory method does not force a new object construction
+
+When you use a constructor, you always get a new object. This sometimes is not a desirable behaviour. There are some cases when you could save some time by returning the previously prepared object instead of always creating a new one. A *Boolean* wrapper class is a good example:
+```java
+ Boolean.valueOf(true)
+```
+This always returns exactly the same object instead of creating a new one. This is just a simple example to explain this use case, but this trick can really make a difference when creating instances of your class is costly and time-consuming. This may resemble a *Flyweight* pattern which I will discuss in another post.
+
+## #3 - An ability to return a subtype
+
+Constructor invocation always return a type of its class. This makes code less flexible and more tightly coupled to a given type. When you use a static factory method, you can return any subclass of given type. It also encourages usage of interfaces which is a good practice. This is commonly used in Java's *Collections* class. In example from below, *Enumeration* is an interface and *EmptyEnumeration* is one of its implementations. Public static factory method returns a subtype of *Enumeration* and it's clients don't have to care about its implementation or even know what type is exactly returned.
+```java
+    public class Collections {
+        .
+        .
+        .
+
+        public static <T> Enumeration<T> emptyEnumeration() {
+            return (Enumeration<T>) EmptyEnumeration.EMPTY_ENUMERATION;
+        }
+
+        private static class EmptyEnumeration<E> implements Enumeration<E> {
+            static final EmptyEnumeration<Object> EMPTY_ENUMERATION = new EmptyEnumeration<>();
+
+            public boolean hasMoreElements() { return false; }
+            public E nextElement() { throw new NoSuchElementException(); }
+            public Iterator<E> asIterator() { return emptyIterator(); }
+        }
+
+        .
+        .
+        .
+    }
+```
+Also, *EmptyEnumeration* is a private class, so API you create looks more clean to its clients. They won't be aware of its existence, it won't show as suggestion during their workflow in IDEs as it's hidden deep down in your package. 
+
+## #4 - You can change returned type without your clients noticing
+
+If clients of your API use constructors, they are coupled to it's class type. It restricts you from making some changes without breaking their code. On the other, if you expose your implementation from factory method, clients of your API can still rely on the interface. You can freely change the concrete type that this method returns as long as it implements a given interface. 
+
+Now let's take a look on the dark side of static factory methods...
+
+# Cons
+
+## #1 - Classes without public or protected constructors can't be inherited
+
+You simply can't extend a class that has hidden constructors. For example, none of the private classes from Java's *Collections* can be extended. It is certainly a disadvantage, but on the other hand, it promotes composition over inheritance, which is considered a good practice.
+
+## #2 - Static factory method are mixed up with standard static methods
+
+Sometimes you are not aware that method that is suggested in your IDE is, in fact, a factory method. They are not as distinct as constructors and can be overlooked. Fortunately, some naming conventions helps with that - you often see static factory methods with names like *from*, *of*, *instance*, *newInstance* etc.
+```java
+ final Date date = Date.from(instant);
+```
+## #3 - It requires some effort and additional code
+
+It's sometimes tempting to just add another constructor and not even think about other options. When you start using static factory methods you may have to push yourself a little to add these additional lines of code instead of just exposing a public constructor.
+
+# Conclusions
+
+Nothing prevents you from using constructors side by side with static factory methods. However, factory methods give you a lot of advantages (and, of course, some costs). Keep them in mind and next time you add a new constructor, ask yourself if you would benefit from using a factory method instead.
