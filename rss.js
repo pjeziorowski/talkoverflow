@@ -20,7 +20,7 @@ const rssOptions = {
             date: edge.node.frontmatter.date,
             url: site.siteMetadata.siteUrl + edge.node.childMdxBlogPost.slug,
             guid: site.siteMetadata.siteUrl + edge.node.childMdxBlogPost.slug,
-            custom_elements: [{ "content:encoded": edge.node.html }],
+            custom_elements: [{ "content:encoded": edge.node.html.replace(/<style/g, '<style style="display: none"') }],
           })
         })
       },
