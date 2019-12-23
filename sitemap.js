@@ -45,7 +45,7 @@ const sitemapOptions = {
           priority: 0.9,
         }
       }
-      else if (edge.node.path.endsWith(site.siteMetadata.siteUrl)) {
+      else if (edge.node.path.endsWith(site.siteMetadata.siteUrl + "/")) {
         return {
           url: site.siteMetadata.siteUrl + edge.node.path,
           changefreq: `monthly`,
