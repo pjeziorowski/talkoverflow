@@ -1,4 +1,5 @@
 const rssOptions = require("./rss");
+const sitemapOptions = require("./sitemap");
 
 module.exports = {
   plugins: [
@@ -17,7 +18,11 @@ module.exports = {
       options: {
           endpoint: 'https://gmx.us5.list-manage.com/subscribe/post?u=9923588ef4183fe0de6e438bf&amp;id=3af4176aa8', 
       },
-  },
+    },
+    {
+      resolve: `gatsby-plugin-sitemap`,
+      options: sitemapOptions,
+    },
     {
       resolve: `gatsby-theme-notes`,
       options: {

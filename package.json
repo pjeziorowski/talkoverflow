@@ -13,6 +13,7 @@
     "gatsby-plugin-google-analytics": "^2.1.29",
     "gatsby-plugin-mailchimp": "^5.1.2",
     "gatsby-plugin-react-svg": "^2.1.2",
+    "gatsby-plugin-sitemap": "^2.2.24",
     "gatsby-theme-blog": "^1.2.3",
     "gatsby-theme-notes": "^1.0.27",
     "react": "^16.12.0",
