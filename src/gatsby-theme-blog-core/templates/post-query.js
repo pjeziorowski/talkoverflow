@@ -16,6 +16,7 @@ export const query = graphql`
     site {
       siteMetadata {
         title
+        discussion
         social {
           name
           url

@@ -51,6 +51,7 @@ module.exports = {
     title: `talkoverflow`,
     author: `Patryk Jeziorowski`,
     siteUrl: 'https://talkoverflow.com',
+    discussion: 'talkoverflow',
     description: `Homepage and blog by Patryk Jeziorowski`,
     pages: [
       {label: 'Posts', path: '/posts'},

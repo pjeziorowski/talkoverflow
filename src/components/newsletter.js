@@ -3,13 +3,15 @@ import React from "react"
 import { Label, Input, Box, Flex, Button, Heading, Card, Text } from "@theme-ui/components"
 import { useMailChimp } from "../hooks/useMailChimp"
 
-export default function Newsletter() {
+export default function Newsletter(props) {
   const [name, setName] = React.useState("")
   const [email, setEmail] = React.useState("")
   const { subscribe, processing, subscribed, error } = useMailChimp(name, email)
+  const mt = props.mt !== null ? props.mt : 4
+  const mb = props.mb !== null ? props.mb : 4
 
   return (
-    <Card mt={4} mb={4}>
+    <Card mt={mt} mb={mb}>
       {subscribed ? (
         <Text p={2}>Thank you for subscribing!</Text>
       ) : (

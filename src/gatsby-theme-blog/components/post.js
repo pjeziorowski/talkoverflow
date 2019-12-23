@@ -11,11 +11,11 @@ import TagCloud from "../../components/post-tags"
 const Post = ({
   data: {
     mdx: {
-      frontmatter: { githubUrl, twitterUrl, featuredImage },
+      frontmatter: { featuredImage },
     },
     post,
     site: {
-      siteMetadata: { title },
+      siteMetadata: { title, discussion },
     },
   },
   location,
@@ -45,9 +45,8 @@ const Post = ({
       <MDXRenderer>{post.body}</MDXRenderer>
     </main>
     <PostFooter
-      {...{ previous, next, githubUrl, twitterUrl, tags: post.tags }}
+      {...{ previous, next, discussion }}
     />{" "}
-    {/* URLs added, tags added */}
   </Layout>
 )
 
