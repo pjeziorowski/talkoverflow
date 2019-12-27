@@ -6,6 +6,7 @@ import merge from "deepmerge"
 
 export default merge(typography, {
   ...baseTheme,
+  breakpoints: ['896px'],
   useColorSchemeMediaQuery: true,
   colors: colors,
   styles: styles,

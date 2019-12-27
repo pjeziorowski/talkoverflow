@@ -8,6 +8,7 @@ import FileList from "gatsby-theme-notes/src/components/file-list"
 import Breadcrumbs from "gatsby-theme-notes/src/components/breadcrumbs"
 import Layout from "gatsby-theme-notes/src/components/layout"
 import { Heading } from "@theme-ui/components"
+import { css } from 'theme-ui'
 
 export default ({
   directories,
@@ -17,11 +18,13 @@ export default ({
   ...props
 }) => (
   <Layout {...props} title={siteTitle}>
-    <Heading as="h2" mb={4}>
-      Digital store of thoughts and notes
-    </Heading>
-    {breadcrumbs.length ? <Breadcrumbs links={breadcrumbs} /> : null}
-    <DirectoryList directories={directories} />
-    <FileList files={files} />
+    <div css={css({width: ['100%', 'container']})}>
+      <Heading as="h2" mb={4}>
+        Digital store of thoughts and notes
+      </Heading>
+      {breadcrumbs.length ? <Breadcrumbs links={breadcrumbs} /> : null}
+      <DirectoryList directories={directories} />
+      <FileList files={files} />
+    </div>
   </Layout>
 )

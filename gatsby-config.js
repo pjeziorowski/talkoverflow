@@ -3,6 +3,7 @@ const sitemapOptions = require("./sitemap");
 
 module.exports = {
   plugins: [
+    'gatsby-plugin-svgr',
     {
       resolve: `gatsby-plugin-google-analytics`,
       options: {
