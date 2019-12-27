@@ -17,9 +17,7 @@ export default () => (
     render={data => (
       <Fragment>
         Hey, I'm <Styled.a href="https://twitter.com/pjeziorowski">{data.site.siteMetadata.author}</Styled.a>
-        . Welcome to my blog.
-        <br />
-        Enjoy software explained with simple words and code.
+        . Welcome to my blog. Enjoy software explained with simple words and code.
       </Fragment>
     )}
   />

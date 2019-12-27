@@ -5,10 +5,12 @@ import React from "react"
 import { Link } from "gatsby"
 import { css, Styled, Flex } from "theme-ui"
 import { DiscussionEmbed } from "disqus-react"
-import Bio from "gatsby-theme-blog/src/components/bio"
 import Newsletter from "../../components/newsletter"
+import BigBio from "../../components/big-bio"
+import ShareButtons from "../../components/share-buttons"
+import TagCloud from "../../components/tag-cloud"
 
-const Footer = ({ previous, next, discussion }) => (
+const Footer = ({ location, previous, next, discussion }) => (
   <footer
     css={css({
       mt: 4,
@@ -17,8 +19,10 @@ const Footer = ({ previous, next, discussion }) => (
   >
     <Styled.h5>Share your thoughts!</Styled.h5>
     <DiscussionEmbed shortname={discussion} />
+    <ShareButtons location={location} mt={2} mb={0}/>
     <Newsletter mt={4} mb={4}/> {/* Added components */}
-    <Bio />
+    <BigBio />
+    <TagCloud />
     {(previous || next) && (
       <Flex
         as="ul"

@@ -10,6 +10,7 @@ import Footer from "gatsby-theme-blog/src/components/home-footer"
 import Newsletter from "../../components/newsletter"
 import PostList from "../../components/post-list"
 import TagCloud from "../../components/tag-cloud"
+import BigBio from "../../components/big-bio"
 
 const Posts = props => {
   return (
@@ -19,7 +20,10 @@ const Posts = props => {
         <Box mt={4}>
           <PostList tag={props.tag} posts={props.posts} />
         </Box>
-        <Newsletter />
+        <Box mb={4}>
+          <Newsletter />
+        </Box>
+        <BigBio />
       </main>
       <Footer socialLinks={props.socialLinks} />
     </Layout>

@@ -42,9 +42,12 @@ export default ({ children, ...props }) => {
 
   const Sidebar = () => (
     <StickyBox offsetTop={85} offsetBottom={20}>
-      <aside>
+      <aside style={{width: '100px'}}>
         <div css={css({ display: ["none", "inline"] })}>
           <Styled.div style={{ textAlign: "center" }}>
+            <Styled.h4 css={css({ marginBottom: "2", color: "secondary" })}>
+              Like the content?
+            </Styled.h4>
             <Styled.h4 css={css({ marginBottom: "1", color: "primary" })}>
               Follow
             </Styled.h4>
@@ -139,9 +142,9 @@ export default ({ children, ...props }) => {
                 <img src={facebookSvgSrc} alt={"Facebook Icon"} />
               </a>
               <Styled.h5 css={css({ color: "primary" })}>
-                ENJOYING THE CONTENT?
+                LIKE THE CONTENT?
                 <br />
-                FOLLOW ME
+                FOLLOW ME & GET UPDATES
               </Styled.h5>
               <a
                 style={{ width: "24px" }}

@@ -7,6 +7,7 @@ import Layout from "gatsby-theme-blog/src/components/layout"
 import SEO from "./seo"
 import { MDXRenderer } from "gatsby-plugin-mdx"
 import TagCloud from "../../components/post-tags"
+import ShareButtons from '../../components/share-buttons'
 
 const Post = ({
   data: {
@@ -23,11 +24,15 @@ const Post = ({
   next,
 }) => (
   <Layout location={location} title={title}>
-    <SEO title={post.title} description={post.excerpt} featuredImage={featuredImage}/>
+    <SEO
+      title={post.title}
+      description={post.excerpt}
+      featuredImage={featuredImage}
+    />
     <main>
       <Styled.h1
         css={css({
-          mb: 1 ,
+          mb: 1,
         })}
       >
         {post.title}
@@ -42,11 +47,10 @@ const Post = ({
       >
         {post.date}
       </Styled.p>
+      <ShareButtons location={location} mt={-4} mb={2}/>
       <MDXRenderer>{post.body}</MDXRenderer>
     </main>
-    <PostFooter
-      {...{ previous, next, discussion }}
-    />{" "}
+    <PostFooter {...{ location, previous, next, discussion }} />
   </Layout>
 )
 
