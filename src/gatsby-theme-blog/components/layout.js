@@ -7,10 +7,10 @@ import twitterSvgSrc from "../../../static/twitter-black.svg"
 import facebookSvgSrc from "../../../static/facebook-black.svg"
 
 export default ({ children, ...props }) => {
-  const currentEncodedHref = encodeURIComponent(window.location.href)
+  const currentEncodedHref = encodeURIComponent(props.location.href)
   const facebookShareUrl = `https://www.facebook.com/sharer.php?u=${currentEncodedHref}`
   const twitterShareUrl = `https://twitter.com/intent/tweet?original_referer=${currentEncodedHref}&ref_src=twsrc%5Etfw&tw_p=tweetbutton&url=${currentEncodedHref}&text=@pjeziorowski%20-%20talkoverflow`
-  const isPostPage = window.location.href.includes("/posts/")
+  const isPostPage = props.location.href.includes("/posts/")
 
   var style = {
     borderTop: "1px solid #1B1F23",
