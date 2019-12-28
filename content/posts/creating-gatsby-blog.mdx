@@ -1,0 +1,165 @@
+---
+title: React & GraphQL blog Done & Deployed in 10 minutes
+date: 2019-12-28T14:30:00+01:00
+tags: ["React", "Javascript", "Gatsby"]
+featuredImage: "https://talkoverflow.com/react-blog.png"
+---
+
+Hello! Do you know [Dan Abramov](https://twitter.com/dan_abramov?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor)? He's the creator of popular Javascript `react-redux` library
+and a member of the core React team. 
+
+In this post, we will create and deploy a blog based on his site - [overreacted.io](https://overreacted.io)
+using **React**, **Gatsby** and its **server-side rendering/graphQL features** in less than **10 minutes**!
+
+## Our goal:
+<Image src="../assets/overreacted.jpg" alt="Overreacted.io" />
+<br />
+
+## Prerequisites
+If you don't have yet `node` installed on your system, follow appropriate installation instructions on [nodejs.org](https://nodejs.org/en/).
+
+## Let's begin!
+First thing we need to do is to install `gatsby-cli`:
+```bash
+npm i -g gatsby-cli
+```
+
+<br />
+
+Now we can bootstrap the project
+```bash
+gatsby new blazing-fast-blog https://github.com/gatsbyjs/gatsby-starter-blog-theme
+```
+
+<br />
+
+This command clones the project template and prepares a development environment.
+
+After it's done, we can start the application:
+```bash
+cd blazing-fast-blog ; gatsby develop
+```
+
+Our page should be up and running in a few seconds.
+
+Check if it's running - [http://localhost:8000](http://localhost:8000)
+
+When it's up, you can also take a quick look at the **GraphQL data explorer** running here -> [http://localhost:8000/___graphql](http://localhost:8000/___graphql) 
+
+It's not relevant for us for now, but it's very handy during the development (it only runs for the development version of the site of course).
+
+We need to make a few quick adjustments:
+
+- open `gatsby-config.json`
+
+It's a file where we can configure our Gatsby site - we can add & configure plugins or define site metadata.
+
+For now, you can adjust the `title`, `author` and `description` in the `siteMetadata` section.
+
+After you're done with adjusting `siteMetadata`, open `src/gatsby-theme-blog/components/gatsby-plugin-theme-ui/colors.js`
+
+Here you can overshadow the default theme colours.
+
+Replace the `src/gatsby-theme-blog/components/gatsby-plugin-theme-ui/colors.js` file content with: 
+```js
+import merge from "deepmerge"
+import defaultThemeColors from "gatsby-theme-blog/src/gatsby-plugin-theme-ui/colors"
+
+const darkBackground = `#282B35`
+const darkPrimary = `#F9A6C4`
+const lightBackground = `#FFFFFF`
+const lightPrimary = `#D23669`
+
+export default merge(defaultThemeColors, {
+ primary: lightPrimary,
+ lightBackground: lightBackground,
+ modes: {
+ dark: {
+ background: darkBackground,
+ primary: darkPrimary,
+ },
+ },
+})
+```
+
+Save the changes. Now, navigate to [http://localhost:8000](http://localhost:8000) and compare with [overreacted.io](https://overreacted.io)
+
+Quite nice for a couple of minutes of work, huh? **We got a nice foundation for further customizations and development of our site**.
+
+By editing the `colors.js` file we used Gatsby's concept of theme **shadowing**, but before we go through Gatsby details, let's deploy our site!
+
+## Deployment
+We'll use `Netlify` - it gives us a **CI/CD pipeline, SSL, custom domain, hosting and integration with GitHub for free**.
+Everything happens kinda automagically - for me, their free plan is a steal!
+
+## How does the process of publishing a new version of site look like?
+
+1. You edit your site/create new content
+2. You commit and push to your GitHub repository
+3. Netlify detects new commits, builds the page, runs tests & deploys a new version seamlessly
+
+First thing we need to do to deploy our site, is to create a new repository on our GitHub account.
+- Go to [github.com](https://github.com), log in and create a new repository
+
+
+
+After creating a new GitHub repository, in terminal navigate to our project folder.
+
+**Then, commit & push the changes to the newly created GitHub repository** (with proper YOUR_USERNAME and REPO_NAME):
+```bash
+git add . 
+git commit -m "Initial structure"
+git remote add origin https://github.com/${YOUR_USERNAME}/${REPO_NAME}.git 
+git push -u origin master
+```
+
+<br />
+
+Now it's time to navigate to [Netlify.com](https://netlify.com) and register & log in
+
+When you're logged in, navigate to your `Profile` -> `Sites`
+
+<Image src="../assets/netlify-sites.jpg" alt="Netlify Sites" />
+
+<br />
+
+Click `New site from Git`
+
+Choose GitHub & authorize
+<Image src="../assets/netlify-github.jpg" alt="Netlify Github" />
+
+<br />
+
+After authorization, a list of repositories should appear:
+<Image src="../assets/netlify-repos.jpg" alt="Netlify Github" />
+<br />
+
+
+If you don't see your new repository, click `Configure the Netlify app on GitHub` and grant Netlify access to your repository
+
+After you're done with this, select your repository from the list.
+
+In next step, simply click `Deploy site`
+<Image src="../assets/deploy-netlify.jpg" alt="Netlify Deploy" />
+<br />
+
+And that's all! After a minute, your site will be up and running. You can check its URL here:
+<Image src="../assets/netlify-url.jpg" alt="Netlify Url" />
+<br />
+
+Done & Deployed!
+<Image src="../assets/netlify-deployed.jpg" alt="Netlify Deploy" />
+
+<br />
+
+If you have a custom domain, you can follow instructions from **2nd step of Getting started on Netlify**
+and use your domain instead.
+
+## Conclusions
+In this post, in a couple of minutes, we created overreacted.io-like blog and deployed it to Netlify.
+We got a solid foundation for customizations and **possibility of learning React, GraphQL & Gatsby while maintaining our blog**.
+
+If you **liked this post** or **want me to write more** posts about Gatsby and site customizations/adding features,
+**please let me know in comments and likes**.
+
+**Thank you for reading!**
