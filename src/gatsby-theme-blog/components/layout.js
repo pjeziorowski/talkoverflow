@@ -41,7 +41,7 @@ export default ({ children, ...props }) => {
   }
 
   const Sidebar = () => (
-    <StickyBox offsetTop={85} offsetBottom={20}>
+    <StickyBox offsetTop={30} offsetBottom={20}>
       <aside style={{width: '100px'}}>
         <div css={css({ display: ["none", "inline"] })}>
           <Styled.div style={{ textAlign: "center" }}>
@@ -54,10 +54,9 @@ export default ({ children, ...props }) => {
           </Styled.div>
           <div
             style={{
-              width: "24px",
+              width: "40px",
               maxHeight: "64px",
-              margin: "auto",
-              marginBot: "10px",
+              margin: "0px auto 15px auto",
             }}
           >
             <a
@@ -84,7 +83,7 @@ export default ({ children, ...props }) => {
                   </Styled.h4>
                 </Styled.div>
                 <div
-                  style={{ width: "24px", maxHeight: "64px", margin: "auto" }}
+                  style={{ width: "40px", maxHeight: "64px", margin: "auto" }}
                 >
                   <a
                     href={facebookShareUrl}
@@ -126,7 +125,7 @@ export default ({ children, ...props }) => {
               maxWidth: `container`,
               mx: `auto`,
               px: 3,
-              py: 4,
+              py: 0,
             })}
           >
             {children}
