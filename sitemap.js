@@ -1,4 +1,5 @@
 const sitemapOptions = {
+  exclude: ["/notes/**"],
   query: `
     {
       site {
