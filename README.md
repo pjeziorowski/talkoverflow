@@ -1,101 +1,61 @@
-<p align="center">
-  <a href="https://www.gatsbyjs.org">
-    <img alt="Gatsby" src="https://www.gatsbyjs.org/monogram.svg" width="60" />
-  </a>
-</p>
-<h1 align="center">
-  Starter for the official Gatsby blog and notes themes.
-</h1>
+<a href="https://novela.narative.co" target="_blank">
+<img src="https://raw.githubusercontent.com/narative/gatsby-theme-novela-example/master/assets/gatsby-theme-novela-hero.jpg" alt="gatsby-novela-theme hero image" />
+</a>
 
-Quickly get started using the Gatsby blog theme, and notes theme, together! This starter creates a new Gatsby site that is preconfigured to work with the [blog theme](https://www.npmjs.com/package/gatsby-theme-blog) and the [notes theme](https://www.npmjs.com/package/gatsby-theme-notes), in harmony.
+<br/>
 
-## 🚀 Quick start
+# Gatsby Starter Novela
 
-1.  **Create a Gatsby site.**
+With minimal styling and maximum features — including multiple homepage layouts, built-in social sharing and dark mode — Novela makes it easy to start publishing beautiful articles and stories with Gatsby.
 
-    Use the Gatsby CLI to create a new site, specifying this theme starter.
+Novela is built by the team at [Narative](https://www.narative.co), and built for everyone that loves the web.
 
-    ```shell
-    # create a new Gatsby site using this theme starter
-    gatsby new my-themed-site https://github.com/gatsbyjs/gatsby-starter-theme
-    ```
+<div>
+<a href="https://novela.narative.co" target="_blank">
+<img src="https://raw.githubusercontent.com/narative/gatsby-theme-novela-example/master/assets/gatsby-theme-novela-cta-demo.jpg" alt="gatsby-novela-theme live demo" width="295px" />
+</a>
+</div>
 
-2.  **Start developing.**
+<div>
+<a href="https://www.narative.co/design/open/novela" target="_blank">
+<img src="https://raw.githubusercontent.com/narative/gatsby-theme-novela-example/master/assets/gatsby-theme-novela-cta-figma.jpg" alt="gatsby-novela-theme figma link" width="295px" />
+</a>
+</div>
 
-    Navigate into your new site’s directory and start it up.
+# Using Gatsby Starter Novela
 
-    ```shell
-    cd my-themed-site/
-    gatsby develop
-    ```
+This guide will take you through setting up Novela with Gatsby Starter Novela.
 
-3.  **Open the code and start customizing!**
+### Step 1: Starter installation
 
-    Your site is now running at `http://localhost:8000`!
+##### With `gatsby-cli`:
 
-    To get started, check out the guide to [getting started with using multiple themes](http://gatsbyjs.org/docs/themes/using-a-gatsby-theme), or the [general themes docs](http://gatsbyjs.org/docs/themes).
-
-## 🧐 What's inside?
-
-Here are the top-level files and directories you'll see in a site created using this theme starter.
-
-```
-gatsby-starter-theme
-├── content
-│ ├── assets
-│ │ └── avatar.jpg
-│ ├── notes
-│ │ ├── example-dir
-│ │ │ └── hi.mdx
-│ │ └── hello.mdx
-│ └── posts
-│ ├── hello-world.mdx
-│ ├── my-second-post.mdx
-│ └── new-beginnings.mdx
-├── src
-│ ├── gatsby-theme-blog
-│ │ └── components
-│ │ └── header.js
-│ └── gatsby-theme-notes
-│ └── components
-│ └── layout.js
-├── .gitignore
-├── .prettierrc
-├── gatsby-config.js
-├── LICENSE
-└── package.json
+```sh
+gatsby new novela-site https://github.com/narative/gatsby-starter-novela
 ```
 
-1.  **`/content`**: A content folder holding assets that the blog and notes themes expect to exist. Check out the README for each theme to learn more about the demo content.
+##### With `git clone`:
 
-2.  **`/src`**: You will probably want to customize your site to personalize it. The files under `/src/gatsby-theme-blog` and `/src/gatsby-theme-notes` _shadow_, or override the files of the same name in their respective packages. To learn more about this, check out the [guide to getting started with using the blog theme starter](http://gatsbyjs.org/docs/themes/using-a-gatsby-theme).
+```sh
+git clone git@github.com:narative/gatsby-starter-novela.git novela-site
 
-3.  **`.gitignore`**: This file tells git which files it should not track / not maintain a version history for.
+cd novela-site
 
-4.  **`.prettierrc`**: This file tells [Prettier](https://prettier.io/) which configuration it should use to lint files.
+yarn
+```
 
-5.  **`gatsby-config.js`**: This is the main configuration file for a Gatsby site. This is where you can specify information about your site (metadata) like the site title and description, which Gatsby plugins you’d like to include, etc. When using themes, it's where you'll include the theme plugin, and any customization options the theme provides.
+### Step 2: Develop & Build
 
-6.  **`LICENSE`**: Gatsby is licensed under the MIT license.
+Once installed or cloned locally and all packages are installed you can begin developing your site.
 
-7.  **`package-lock.json`** (See `package.json` below, first). This is an automatically generated file based on the exact versions of your npm dependencies that were installed for your project. **(You won’t change this file directly).**
+```sh
+# Run localhost
+yarn dev
 
-8.  **`package.json`**: A manifest file for Node.js projects, which includes things like metadata (the project’s name, author, etc). This manifest is how npm knows which packages to install for your project.
+# Build your Gatsby site
+yarn build
+```
 
-9.  **`README.md`**: A text file containing useful reference information about your project.
+### Help
 
-## 🎓 Learning Gatsby
-
-Looking for more guidance? Full documentation for Gatsby lives [on the website](https://www.gatsbyjs.org/).
-
-Here are some places to start:
-
-### Themes
-
-- To learn more about Gatsby themes specifically, we recommend checking out the [theme docs](https://www.gatsbyjs.org/docs/themes/).
-
-### General
-
-- **For most developers, we recommend starting with our [in-depth tutorial for creating a site with Gatsby](https://www.gatsbyjs.org/tutorial/).** It starts with zero assumptions about your level of ability and walks through every step of the process.
-
-- **To dive straight into code samples, head [to our documentation](https://www.gatsbyjs.org/docs/).** In particular, check out the _Guides_, _API Reference_, and _Advanced Tutorials_ sections in the sidebar.
+For more information visit the [Theme repository](https://github.com/narative/gatsby-theme-novela)

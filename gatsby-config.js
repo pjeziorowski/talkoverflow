@@ -1,72 +1,77 @@
-const rssOptions = require("./rss");
-const sitemapOptions = require("./sitemap");
+const sitemapOptions = require('./sitemap')
 
 module.exports = {
-  plugins: [
-    'gatsby-plugin-svgr',
-    {
-      resolve: `gatsby-plugin-google-analytics`,
-      options: {
-        trackingId: "UA-128288379-2",
+  siteMetadata: {
+    title: `talkoverflow`,
+    name: `talkoverflow`,
+    siteUrl: `https://talkoverflow.com`,
+    description: `Homepage and blog by Patryk Jeziorowski`,
+    hero: {
+      heading: `Software explained with simple words and code`,
+      maxWidth: 652
+    },
+    social: [
+      {
+        name: `facebook`,
+        url: `https://facebook.com/talkoverflowsoftware/`
       },
+      {
+        name: `twitter`,
+        url: `https://twitter.com/pjeziorowski`
+      },
+      {
+        name: `github`,
+        url: `https://github.com/pjeziorowski`
+      },
+      {
+        name: `linkedin`,
+        url: `https://www.linkedin.com/in/patryk-jeziorowski-81587414a/`
+      }
+    ]
+  },
+  plugins: [
+    {
+      resolve: '@narative/gatsby-theme-novela',
+      options: {
+        contentPosts: 'content/posts',
+        contentAuthors: 'content/authors',
+        authorsPage: true,
+        mailchimp: true,
+        sources: {
+          local: true
+        }
+      }
     },
     {
-      resolve: `gatsby-plugin-feed`,
-      options: rssOptions,
+      resolve: `gatsby-plugin-manifest`,
+      options: {
+        name: `talkoverflow - talk software`,
+        short_name: `talkoverflow`,
+        start_url: `/`,
+        background_color: `#fff`,
+        theme_color: `#fff`,
+        display: `standalone`,
+        icon: `src/assets/favicon.png`
+      }
+    },
+    {
+      resolve: `gatsby-plugin-sitemap`,
+      options: sitemapOptions
     },
     {
       resolve: 'gatsby-plugin-mailchimp',
       options: {
-          endpoint: 'https://gmx.us5.list-manage.com/subscribe/post?u=9923588ef4183fe0de6e438bf&amp;id=3af4176aa8', 
-      },
-    },
-    {
-      resolve: `gatsby-plugin-sitemap`,
-      options: sitemapOptions,
-    },
-    {
-      resolve: `gatsby-theme-notes`,
-      options: {
-        mdx: false,
-        basePath: `/notes`, 
-      },
-    },
-    // fixes double-image problem possibly in gatsby-plugin-mdx
-    {
-      resolve: 'gatsby-plugin-mdx',
-      options: {
-        gatsbyRemarkPlugins: [ `gatsby-remark-images` ],
-        plugins: [ `gatsby-remark-images` ],
+        endpoint: 'https://gmx.us5.list-manage.com/subscribe/post?u=9923588ef4183fe0de6e438bf&amp;id=3af4176aa8'
       }
     },
-    // with gatsby-plugin-theme-ui, the last theme in the config
-    // will override the theme-ui context from other themes
     {
-      resolve: `gatsby-theme-blog`,
+      resolve: `gatsby-plugin-google-analytics`,
       options: {
-        basePath: `/posts`,
-      },
+        trackingId: 'UA-128288379-2'
+      }
     },
-  ],
-  siteMetadata: {
-    title: `talkoverflow`,
-    author: `Patryk Jeziorowski`,
-    siteUrl: 'https://talkoverflow.com',
-    discussion: 'talkoverflow',
-    description: `Homepage and blog by Patryk Jeziorowski`,
-    pages: [
-      {label: 'Posts', path: '/posts'},
-      {label: 'Notes', path: '/notes'},
-    ],
-    social: [
-      {
-        name: `Twitter`,  
-        url: `https://twitter.com/pjeziorowski`,
-      },
-      {
-        name: `Github`,
-        url: `https://github.com/pjeziorowski`,
-      },
-    ],
-  },
+    // {
+    //   resolve: `gatsby-plugin-netlify`,
+    // },
+  ]
 }
