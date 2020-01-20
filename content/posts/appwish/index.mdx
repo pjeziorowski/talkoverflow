@@ -33,11 +33,11 @@ The GraphQL server parses those files and uses them as a contract - contract for
 Let's supppose that the client sent this query:
 ```
 query {
- wish(id: 123) {
- title
- content
- rating
- }
+  wish(id: 123) {
+    title
+    content
+    rating
+  }
 }
 ```
 
@@ -99,12 +99,12 @@ For example, this:
 
 ```protobuf
 message WishProto {
- int64 id = 1;
- int64 authorId = 2;
- string title = 3;
- string content = 4;
- string url = 5;
- string cover_image_url = 6;
+  int64 id = 1;
+  int64 authorId = 2;
+  string title = 3;
+  string content = 4;
+  string url = 5;
+  string cover_image_url = 6;
 }
 ```
 
@@ -114,16 +114,16 @@ and deserialized for network transfer.
 This part:
 ```
 service WishService {
- rpc GetAllWish (AllWishQueryProto) returns (AllWishReplyProto) {
- }
- rpc GetWish (WishQueryProto) returns (WishReplyProto) {
- }
- rpc CreateWish (WishInputProto) returns (WishReplyProto) {
- }
- rpc UpdateWish (UpdateWishInputProto) returns (WishReplyProto) {
- }
- rpc DeleteWish (WishQueryProto) returns (WishDeleteReplyProto) {
- }
+  rpc GetAllWish (AllWishQueryProto) returns (AllWishReplyProto) {
+  }
+  rpc GetWish (WishQueryProto) returns (WishReplyProto) {
+  }
+  rpc CreateWish (WishInputProto) returns (WishReplyProto) {
+  }
+  rpc UpdateWish (UpdateWishInputProto) returns (WishReplyProto) {
+  }
+  rpc DeleteWish (WishQueryProto) returns (WishDeleteReplyProto) {
+  }
 }
 ```
 
@@ -143,15 +143,15 @@ You can see the use of generated client [here.](https://github.com/appwish/graph
 I'll quickly go through one usage of the stub:
 
 ```java
- eventBus.<WishQueryProto>consumer(Address.WISH.get(), event -> {
- stub.getWish(event.body(), grpc -> {
- if (grpc.succeeded()) {
- event.reply(grpc.result());
- } else {
- event.fail(FAILURE_CODE, WISH_SERVICE_COMMUNICATION_ERROR_MESSAGE);
- }
- });
- });
+    eventBus.<WishQueryProto>consumer(Address.WISH.get(), event -> {
+      stub.getWish(event.body(), grpc -> {
+        if (grpc.succeeded()) {
+          event.reply(grpc.result());
+        } else {
+          event.fail(FAILURE_CODE, WISH_SERVICE_COMMUNICATION_ERROR_MESSAGE);
+        }
+      });
+    });
 ```
 
 The gRPC client service registers an event consumer, that accepts "WishQueries" as an input.
@@ -161,8 +161,8 @@ Stub.getWish() is invoked. Stub is the generated wish service gRPC client, and g
 to what we declared in our .proto file:
 
 ```proto
- rpc GetWish (WishQueryProto) returns (WishReplyProto) {
- }
+  rpc GetWish (WishQueryProto) returns (WishReplyProto) {
+  }
 ```
 
 As you see, we use the WishQueryProt as an input, invoke stub.GetWish() method, and wait for WishReply output.
@@ -172,12 +172,12 @@ Waiting for the result from another application is asynchronous, so the code tha
 lambda callback that is invoked when the result arrives:
 ```java
 grpc -> {
- if (grpc.succeeded()) {
- event.reply(grpc.result());
- } else {
- event.fail(FAILURE_CODE, WISH_SERVICE_COMMUNICATION_ERROR_MESSAGE);
- }
- }
+        if (grpc.succeeded()) {
+          event.reply(grpc.result());
+        } else {
+          event.fail(FAILURE_CODE, WISH_SERVICE_COMMUNICATION_ERROR_MESSAGE);
+        }
+      }
 ```
 
 If the gRPC call succeeded, we send a REPLY on the event bus to the DataFetcher with the gRPC request result (WishReply).
@@ -192,16 +192,16 @@ To implement a gRPC server, again, we need to follow what we declared in our .pr
 
 ```proto
 service WishService {
- rpc GetAllWish (AllWishQueryProto) returns (AllWishReplyProto) {
- }
- rpc GetWish (WishQueryProto) returns (WishReplyProto) {
- }
- rpc CreateWish (WishInputProto) returns (WishReplyProto) {
- }
- rpc UpdateWish (UpdateWishInputProto) returns (WishReplyProto) {
- }
- rpc DeleteWish (WishQueryProto) returns (WishDeleteReplyProto) {
- }
+  rpc GetAllWish (AllWishQueryProto) returns (AllWishReplyProto) {
+  }
+  rpc GetWish (WishQueryProto) returns (WishReplyProto) {
+  }
+  rpc CreateWish (WishInputProto) returns (WishReplyProto) {
+  }
+  rpc UpdateWish (UpdateWishInputProto) returns (WishReplyProto) {
+  }
+  rpc DeleteWish (WishQueryProto) returns (WishDeleteReplyProto) {
+  }
 }
 ```
 
@@ -215,23 +215,23 @@ In wish service it's done [here.](https://github.com/appwish/wishservice/blob/ma
 Let's go through one of overriden methods:
 
 ```java
- /**
- * This method gets invoked when other service (app, microservice) invokes stub.getWish(...)
- */
- @Override
- public void getWish(final WishQueryProto request, final Promise<WishReplyProto> response) {
- eventBus.<Optional<Wish>>request(
- Address.FIND_ONE_WISH.get(), converter.toDomain(WishQuery.class, request),
- event -> {
- if (event.succeeded() && event.result().body().isPresent()) {
- response.complete(converter.toProtobuf(WishReplyProto.class, new WishReply(event.result().body().get())));
- } else if (event.succeeded()) {
- response.complete();
- } else {
- response.fail(event.cause());
- }
- });
- }
+  /**
+   * This method gets invoked when other service (app, microservice) invokes stub.getWish(...)
+   */
+  @Override
+  public void getWish(final WishQueryProto request, final Promise<WishReplyProto> response) {
+    eventBus.<Optional<Wish>>request(
+      Address.FIND_ONE_WISH.get(), converter.toDomain(WishQuery.class, request),
+      event -> {
+        if (event.succeeded() && event.result().body().isPresent()) {
+          response.complete(converter.toProtobuf(WishReplyProto.class, new WishReply(event.result().body().get())));
+        } else if (event.succeeded()) {
+          response.complete();
+        } else {
+          response.fail(event.cause());
+        }
+      });
+  }
 ```
 
 As you see, the method name matches what we declared in .proto file. We also get a WishQuery input, and
@@ -259,22 +259,22 @@ The Database Verticle uses a DatabaseService to register handlers that listens f
 As you see, the event bus handlers are declared as follows:
 
 ```java
- public void registerEventBusEventHandlers() {
- eventBus.<AllWishQuery>consumer(Address.FIND_ALL_WISHES.get())
- .handler(event -> wishRepository.findAll(event.body()).setHandler(findAllHandler(event)));
+  public void registerEventBusEventHandlers() {
+    eventBus.<AllWishQuery>consumer(Address.FIND_ALL_WISHES.get())
+      .handler(event -> wishRepository.findAll(event.body()).setHandler(findAllHandler(event)));
 
- eventBus.<WishQuery>consumer(Address.FIND_ONE_WISH.get())
- .handler(event -> wishRepository.findOne(event.body()).setHandler(findOneHandler(event)));
+    eventBus.<WishQuery>consumer(Address.FIND_ONE_WISH.get())
+      .handler(event -> wishRepository.findOne(event.body()).setHandler(findOneHandler(event)));
 
- eventBus.<WishInput>consumer(Address.CREATE_ONE_WISH.get())
- .handler(event -> wishRepository.addOne(event.body()).setHandler(addOneHandler(event)));
+    eventBus.<WishInput>consumer(Address.CREATE_ONE_WISH.get())
+      .handler(event -> wishRepository.addOne(event.body()).setHandler(addOneHandler(event)));
 
- eventBus.<UpdateWishInput>consumer(Address.UPDATE_ONE_WISH.get())
- .handler(event -> wishRepository.updateOne(event.body()).setHandler(updateOneHandler(event)));
+    eventBus.<UpdateWishInput>consumer(Address.UPDATE_ONE_WISH.get())
+      .handler(event -> wishRepository.updateOne(event.body()).setHandler(updateOneHandler(event)));
 
- eventBus.<WishQuery>consumer(Address.DELETE_ONE_WISH.get())
- .handler(event -> wishRepository.deleteOne(event.body()).setHandler(deleteOneHandler(event)));
- }
+    eventBus.<WishQuery>consumer(Address.DELETE_ONE_WISH.get())
+      .handler(event -> wishRepository.deleteOne(event.body()).setHandler(deleteOneHandler(event)));
+  }
 ```
 
 They consume event bus events with WishQueries/Inputs. When an event occurs, they use wishRepository (code that actually
@@ -291,16 +291,16 @@ wishRepository.findOne(event.body()).setHandler(findOneHandler(event))
 
 And the handler simply sends REPLIES to the gRPC Verticle that requested data from the database via the event bus in case of success or notifies about failures in case of errors:
 ```java
- private Handler<AsyncResult<Optional<Wish>>> updateOneHandler(
- final Message<UpdateWishInput> event) {
- return query -> {
- if (query.succeeded()) {
- event.reply(query.result(), new DeliveryOptions().setCodecName(Codec.WISH.getCodecName()));
- } else {
- event.fail(1, "Error updating the wish in the database");
- }
- };
- }
+  private Handler<AsyncResult<Optional<Wish>>> updateOneHandler(
+    final Message<UpdateWishInput> event) {
+    return query -> {
+      if (query.succeeded()) {
+        event.reply(query.result(), new DeliveryOptions().setCodecName(Codec.WISH.getCodecName()));
+      } else {
+        event.fail(1, "Error updating the wish in the database");
+      }
+    };
+  }
 ```
 
 If the whole flow succeeds, the data is returned to the UI that sent the initial GraphQL request
