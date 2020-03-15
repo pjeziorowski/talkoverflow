@@ -9,7 +9,7 @@ import Paginator from "@narative/gatsby-theme-novela/src/components/Navigation/N
 import ArticlesHero from "@narative/gatsby-theme-novela/src/sections/articles/Articles.Hero";
 import ArticlesList from "@narative/gatsby-theme-novela/src/sections/articles/Articles.List";
 
-import { Template } from "@types";
+import { Template } from "@narative/gatsby-theme-novela/src/types";
 
 const ArticlesPage: Template = ({ location, pageContext }) => {
   const articles = pageContext.group;
