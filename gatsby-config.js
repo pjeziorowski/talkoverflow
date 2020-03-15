@@ -7,7 +7,7 @@ module.exports = {
     siteUrl: `https://talkoverflow.com`,
     description: `Homepage and blog by Patryk Jeziorowski`,
     hero: {
-      heading: `Software explained with simple words and code`,
+      heading: ``,
       maxWidth: 652
     },
     social: [
@@ -25,7 +25,7 @@ module.exports = {
       },
       {
         name: `linkedin`,
-        url: `https://www.linkedin.com/in/patryk-jeziorowski-81587414a/`
+        url: `https://www.linkedin.com/in/patrykjeziorowski/`
       }
     ]
   },
