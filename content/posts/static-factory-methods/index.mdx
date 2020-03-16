@@ -6,7 +6,7 @@ hero: "./images/design-patterns.png"
 author: Patryk Jeziorowski
 ---
 # Introduction
-The topic of this short article is pretty simple - creating objects. The most popular basic ways of creating objects in Java are direct constructor invocation and usage of static factory methods (don't confuse with a Factory Method design pattern, which will be discussed in another post). In this article, I'll tell you about pros and cons of using static factory methods and about factors you should consider while designing your classes and APIs.
+The topic of this short article is pretty simple - creating objects. The most popular basic ways of creating objects in Java are direct constructor invocation and usage of static factory methods (don't confuse with a Factory Method design pattern, which will be discussed in another post). In this article, I'll tell you about the pros and cons of using static factory methods and about factors you should consider while designing your classes and APIs.
 
 # Pros
 
@@ -20,27 +20,27 @@ What does that represent? A certain point in time, a day? And now let's take a l
 ```java
  Time.until("08.05.2019")
 ```
-This is much more clear. You don't have to check documentation or look deeper into implementation, you just read this line and go further with your work.
+This is much more clear. You don't have to check the documentation or look deeper into implementation, you just read this line and go further with your work.
 
-Ability to give method a name gives us one more advantage over traditional constructors. Look at this snippet:
-```java{1}
+Ability to give the method a name gives us one more advantage over traditional constructors. Look at this snippet:
+```java
  Time.after("08.05.2019")
 ```
 You wouldn't be able to achieve this with constructors. Why? You simply can't have two constructors with the same signature:
 ```java
     class Time {
-    	public Time(final String until) { 
-    	// returns time until given point in time
-    	.
-    	.
-    	.
+        public Time(final String until) { 
+        // returns time until given point in time
+        .
+        .
+        .
      } 
     
      public Time(final String after) { 
-    	// returns time after given point in time
-    	.
-    	.
-    	.
+        // returns time after a given point in time
+        .
+        .
+        .
      }
     }
 ```
@@ -80,11 +80,11 @@ Constructor invocation always return a type of its class. This makes code less f
         .
     }
 ```
-Also, *EmptyEnumeration* is a private class, so API you create looks more clean to its clients. They won't be aware of its existence, it won't show as suggestion during their workflow in IDEs as it's hidden deep down in your package. 
+Also, *EmptyEnumeration* is a private class, so API you create looks cleaner to its clients. They won't be aware of its existence, it won't show as a suggestion during their workflow in IDEs as it's hidden deep down in your package. 
 
 ## #4 - You can change returned type without your clients noticing
 
-If clients of your API use constructors, they are coupled to it's class type. It restricts you from making some changes without breaking their code. On the other, if you expose your implementation from factory method, clients of your API can still rely on the interface. You can freely change the concrete type that this method returns as long as it implements a given interface. 
+If clients of your API use constructors, they are coupled to it's class type. It restricts you from making some changes without breaking their code. On the other, if you expose your implementation from the factory method, clients of your API can still rely on the interface. You can freely change the concrete type that this method returns as long as it implements a given interface. 
 
 Now let's take a look on the dark side of static factory methods...
 

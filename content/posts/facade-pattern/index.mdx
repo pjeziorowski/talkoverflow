@@ -1,5 +1,5 @@
 ---
-title: The Facade Design Pattern
+title: Facade Design Pattern
 date: 2019-12-30
 tags: ["Design Patterns", "Clean Code", "Java", "Gang of Four"]
 hero: "./images/design-patterns.png"
@@ -17,7 +17,7 @@ s
 
 ![Facade Pattern](./images/facadeless.jpg)
 
-The client knows the elements of module and orchestrates the work.
+The client knows the elements of the module and orchestrates the work.
 
 ---
 ### With Facade
@@ -43,7 +43,7 @@ The client doesn't know anything about subsystem, it communicates with the facad
 Let's pretend that we're working on an e-commerce application. We want to implement product ordering.
 We already got a few services in our app, but they are not integrated.
 
-```java {1,3}
+```java
 public interface InventoryService {
     boolean isAvailable(int productId);
     int order(int productId);
@@ -68,7 +68,7 @@ public interface OrderFacade {
 }
 ```
 
-We don't want the client code to interact with all services just to make an order, so we provide nice and clean API with Facade.
+We don't want the client code to interact with all services just to make an order, so we provide a nice and clean API with Facade.
 
 Here's its implementation:
 ```java
@@ -105,7 +105,7 @@ All services methods are hidden behind the facade - making an order is much simp
 ```java
 public class SomeClientCode {
     // This could be injected by some DI framework
-    private OrderFacade orderfacde;
+    private OrderFacade orderFacde;
 
     public static void main(String[] args) {
         final int someProductId;
