@@ -30,7 +30,7 @@ This part is marked in the picture below:
 To send GraphQL queries, the client needs to know the GraphQL schema, which is declared in [.graphqls files](https://github.com/appwish/graphqlapi/tree/master/src/main/resources/schema).
 The GraphQL server parses those files and uses them as a contract - contract for UI - backend communication.
 
-Let's supppose that the client sent this query:
+Let's suppose that the client sent this query:
 ```
 query {
   wish(id: 123) {
@@ -45,7 +45,7 @@ In this case, the GraphQL server has to return the data that the UI asked for (t
 
 ### It can't do it on its own
 Even though the schema is created, the GraphQL server won't be able to provide the data UI asks.
-It doesn't know how! You need to connect the schema to some executable code that is able to get required data or execute appropriate business logic.
+It doesn't know how! You need to connect the schema to some executable code that is able to get the required data or execute appropriate business logic.
 
 
 In other words, all operations that are declared in the GraphQL schema need to be associated with code that can deliver
@@ -61,7 +61,7 @@ After we provide RuntimeWirings and DataFetchers, the GraphQL server will know h
 ### Let's discuss how we implement DataFetchers then.
 
 As you probably already know, Appwish use [Vert.x](https://vertx.io/) as a main backend framework and [gRPC](https://grpc.io/) for service-to-service communication.
-One of core Vert.x components is the [Event Bus](https://vertx.io/docs/apidocs/io/vertx/core/eventbus/EventBus.html). Event Bus can be used as a communication channel between various parts of the application.
+One of the core Vert.x components is the [Event Bus](https://vertx.io/docs/apidocs/io/vertx/core/eventbus/EventBus.html). Event Bus can be used as a communication channel between various parts of the application.
 It can be even used to communicate with other apps, but in Appwish we don't use this feature - we use gRPC to talk to other backend
 applications. The Event Bus is used only for internal communication inside applications.
 
@@ -127,7 +127,7 @@ service WishService {
 }
 ```
 
-defines the interface to communicate with wish service. All rpc methods have a name, input and output.
+defines the interface to communicate with wish service. All RPC methods have a name, input and output.
 
 Using this declaration, we can generate Java code that is then used for communication with wish service and other
 applications.
@@ -136,7 +136,7 @@ When we generate source code from service declaration in .proto files we get bot
 other apps use generated client to send requests.
 
 On the client-side, the generated client (service stub) is all you need to communicate with wish service.
-You don't need to implement anything (except of the logic that handles the data we receive from the other application, of course).
+You don't need to implement anything (except for the logic that handles the data we receive from the other application, of course).
 
 You can see the use of generated client [here.](https://github.com/appwish/graphqlapi/blob/master/src/main/java/io/appwish/graphqlapi/grpc/WishGrpcClientService.java).
 
@@ -212,7 +212,7 @@ All we have to do is to provide implementation for those methods.
 
 In wish service it's done [here.](https://github.com/appwish/wishservice/blob/master/src/main/java/io/appwish/wishservice/service/GrpcServiceImpl.java)
 
-Let's go through one of overriden methods:
+Let's go through one of the overridden methods:
 
 ```java
   /**
@@ -243,11 +243,11 @@ WishReply promise.
 As we use Vert.x, it's implemented using the Event Bus. We send an event bus request and wait till one of the handlers
 responds with what we need.
 
-This part is marked on the image below:
+This part is marked in the image below:
 
 ![Database Event Bus Request](./images/4.png)
 
-The gRPC server uses the event bus to request wish data. On the second side of event bus there is a Database Verticle
+The gRPC server uses the event bus to request wish data. On the second side of the event bus there is a Database Verticle
 that consumes those requests, talks with the database and responds with the result:
 
 ![Database Access](./images/5.png)

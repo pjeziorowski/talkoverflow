@@ -1,0 +1,102 @@
+---
+title: "OpenID Connect + SPA + BACKEND API - Authentication in modern webapps"
+date: 2020-03-16
+tags: ["React", "OpenSource", "Java"]
+hero: "locked.jpg"
+author: Patryk Jeziorowski
+slug: openid-connect-authentication
+---
+In this post, I’ll try to cover how the process of authentication will look like in [Appwish platform](https://github.com/appwish). Appwish is made of frontend UI written in React/Next.js and a set of backend microservices. What we want to achieve is to use 3rd party service to authenticate users in Appwish so that we do not have to worry about managing users credentials and other sensitive data.
+
+Before we dig down into the details, let’s first go through a few important theoretical concepts.
+
+## Entity vs Identity
+
+Let’s start by discussing two concepts - entity and identity. 
+
+Entity is a **thing** that exists as an **individual unit** while identity is a **set of attributes that can be used to distinguish the entity within a context**.
+
+Let’s assume we know Mike. He is a young man who lives in Poland. He is working as a software engineer for one of the local IT startups. **Mike is the entity**. **He has many identities** i.e. he can be defined as a young polish man in one context and as a promising software engineer in another. Other people may perceive Mike (entity) using different subsets of his attributes (identities).
+
+If the difference between entity and identity is still not clear, let’s go through one more example.
+
+In the software world, your backend could be described as an entity. It’s the **thing**. Your UI application perceives it as a URL and a certificate (one identity). Your database, on the other hand, sees it as a different identity – a set of credentials that grants access to the database.
+
+
+
+## Authentication vs Authorization 
+
+Those two concepts are often mixed and misunderstood. Let’s start with defining what is authentication. **Authentication is a form of confirming the identity of the entity**. It is used as a proof that a THING is really the *THING*. If you book a room in a hotel, you may need to authenticate with your ID or passport if you’re abroad. In this example, the authentication process is used to confirm your identity in the hotel.
+
+On the other hand, **authorization is a process of verifying if a given entity can access or perform actions on a given resource**. For example, if you go to the cinema, you buy a ticket. The cinema crew is not interested in your identity though. All you need to do to see the movie is to show the ticket that contains no information about you as an entity.
+
+What is important to understand – the authentication can lead to authorization, but it doesn’t work the other way around. Being authenticated may authorize you to access some resource, but being authorized doesn't identify (just like the cinema ticket does not tell who you are). 
+
+> Understanding the above concepts is critical to understand OpenID Connect and authentication/authorization in modern apps.
+
+## OpenID Connect – OIDC
+OIDC is a protocol that enables applications to support authentication and identity management in a secure way. Apps that use OIDC rely on identity providers to handle the authentication process to verify the identities of users. 
+
+**What is the identity provider?** *Identity Provider is an entity that is in charge of authenticating end users.*
+
+Appwish needs to identify users to allow them to perform some actions. By using OpenID Connect we don’t have to deal with storing users credentials – the whole security thing is outsourced to identity providers.
+
+**How the integration between Appwish (or any other modern web application) and identity providers looks like?**
+
+When users want to log in, Appwish redirects them to one of the identity providers where they prove their identity. After successful authentication identity provider redirects users with identity proof back to Appwish.
+
+If you’re familiar with OAuth 2.0 you may see a lot of similarities between OIDC and OAuth 2.0. This is not a coincidence – **OIDC extends and is built on OAuth 2.0**.
+
+
+## What is OAuth 2.0 in a nutshell
+OAuth 2.0 is an **authorization framework** that enables **clients** to use **resource servers** on behalf of **resource owners**. 
+
+To explain what it means let’s use **Twitter** as an example. The client is **your application**. Resource owner is the **end-user i.e. Twitter user**. Resource server, in this case, would be **Twitter API**.
+
+OAuth 2.0 is a framework that enables clients (your app) to use resource servers (Twitter API) on behalf of resource owners (Twitter users).
+
+For example – you could create an app that would post random Tweets on Twitter. If someone would like to use your app, you would have to go through OAuth 2.0 flow to let Twitter users authorize your application to post Tweets on their behalf.
+
+One essential thing that is missing in the description above is the **authorization server**. OIDC reuses the concept of authorization server from the OAuth 2.0 specification. However, in OAuth 2.0 the authorization server plays a bit different role than in OIDC - **authorization servers in OAuth 2.0 flow provide means for resource owners (e.g. Twitter users) to decide whether they want to grant the client (e.g. your app) the power to do something (e.g. post a Tweet) on their behalf**. OIDC extends the scope of the authorization server and **makes it also the entity where users sign in and authenticate**.
+
+## How does it work?
+
+In a very simplified version – upon sign-in, your app redirects users to the identity provider where they authenticate. After successful authentication, the identity provider redirect users back to your application along with a few artifacts.
+
+In OAuth 2.0 the only artifact returned is the **access token**. This token grants your application access to the resource server on behalf of the user.
+
+In Oauth 2.0 the resource owner (Twitter user) uses authorization server (Twitter authorization server) to authorize the client (your application) to act on his behalf in the resource server (Twitter API).
+
+The main takeaway is that OAuth 2.0 is an **AUTHORIZATION** framework. 
+
+**In OIDC authorization server can return one more artifact – the ID token**. The ID token contains information about user identity.
+
+The flow of redirects and exchanging tokens from above is simplified – there are many flows you can use to get tokens from identity providers. [Here](https://auth0.com/docs/flows) 
+you can learn more about available flows.
+
+
+## Benefits of using OIDC
+- Users can reuse their existing accounts. They do not need to create yet another account to log in to your app.
+- Your app doesn’t need to store any credentials or sensitive user data. OIDC defines a set of profile data categories that you can use to acquire information about users, but you don’t have to store it in your database.
+- OpenID Connect does not specify how identity providers should handle the authentication process. This means that identity providers are free to decide how they handle user authentication. They may do it with a set of credentials like username and password, use multi-factor authentication or even delegate this process to another identity provider. 
+
+## What to do with received tokens
+
+### Check tokens validity
+
+To check the signature of ID tokens, your app can use **public key** issued by the authorization server. The authorization server signs tokens with its **private key**. The public key is used by third-party applications (e.g. your app) to confirm that the key was in fact issued by our desired authorization server.
+
+After verifying the signature of the ID token, there are a few next things we need to validate like audience, expiration time, issuer or nonce. You can read more about it here https://auth0.com/docs/tokens/guides/validate-id-tokens.
+
+## How OpenID Connect is used in Appwish?
+
+### SIGNING IN
+Appwish SPA will use one of OIDC flows to get access token and ID token from identity provider. Till last year, the **Implicit Flow** was recommended way for SPAs, but a few months ago the **OAuth Working Group** has published new guidance around flows in Javascript frontend applications, so Appwish will use **PKCE** instead. You can read more about it [here](https://developer.okta.com/blog/2019/05/01/is-the-oauth-implicit-flow-dead).
+
+After the ID token is received, the SPA sends a GraphQL query to the backend where the token is verified. After that, backend checks if user is already existing in the database. If so, the users are logged in. Otherwise, a new entry with a minimal subset of user data from the ID token is added to the database. This registers a new user in Appwish.
+
+## Conclusions
+I hope this post shed some light on OIDC, OAuth 2.0 and authentication/authorization in web world. Of course, this post barely scratched the surface of the problem - it was meant to give you the general idea and encourage to play with it more in your free time.
+If you are interested in Appwish and contributing to open-source, you can join me and over 140 other developers and IT geeks on [Slack](https://join.slack.com/t/appwish/shared_invite/zt-ch15ouau-VyBGlMJOS3Xu96EhbyidPw).
+
+Feedback and comments are of course highly appreciated!
