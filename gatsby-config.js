@@ -1,77 +1,77 @@
-const sitemapOptions = require('./sitemap')
-
+require(`dotenv`).config({
+  path: `.env`,
+})
 module.exports = {
   siteMetadata: {
-    title: `talkoverflow`,
-    name: `talkoverflow`,
+    siteTitle: `talkoverflow`,
+    siteHeadline: `Personal blog by Patryk Jeziorowski`,
+    siteTitleAlt: `Personal blog by Patryk Jeziorowski`,
+    siteDescription: `Sharing thoughts and knowledge about software engineering.`,
     siteUrl: `https://talkoverflow.com`,
-    description: `Homepage and blog by Patryk Jeziorowski`,
-    hero: {
-      heading: ``,
-      maxWidth: 652
-    },
-    social: [
-      {
-        name: `facebook`,
-        url: `https://facebook.com/talkoverflowsoftware/`
-      },
-      {
-        name: `twitter`,
-        url: `https://twitter.com/pjeziorowski`
-      },
-      {
-        name: `github`,
-        url: `https://github.com/pjeziorowski`
-      },
-      {
-        name: `linkedin`,
-        url: `https://www.linkedin.com/in/patrykjeziorowski/`
-      }
-    ]
+    author: `Patryk Jeziorowski`
   },
   plugins: [
     {
-      resolve: '@narative/gatsby-theme-novela',
+      resolve: `@lekoarts/gatsby-theme-minimal-blog`,
       options: {
-        contentPosts: 'content/posts',
-        contentAuthors: 'content/authors',
-        authorsPage: true,
-        mailchimp: true,
-        sources: {
-          local: true
-        }
-      }
-    },
-    {
-      resolve: `gatsby-plugin-manifest`,
-      options: {
-        name: `talkoverflow - talk software`,
-        short_name: `talkoverflow`,
-        start_url: `/`,
-        background_color: `#fff`,
-        theme_color: `#fff`,
-        display: `standalone`,
-        icon: `src/assets/favicon.png`
-      }
-    },
-    {
-      resolve: `gatsby-plugin-sitemap`,
-      options: sitemapOptions
-    },
-    {
-      resolve: 'gatsby-plugin-mailchimp',
-      options: {
-        endpoint: 'https://gmx.us5.list-manage.com/subscribe/post?u=9923588ef4183fe0de6e438bf&amp;id=3af4176aa8'
-      }
+        navigation: [
+          {
+            title: `Blog`,
+            slug: `/blog`,
+          },
+          {
+            title: `Tags`,
+            slug: `/tags`,
+          },
+          {
+            title: `About`,
+            slug: `/about`,
+          },
+        ],
+        externalLinks: [
+          {
+            name: `Twitter`,
+            url: `https://twitter.com/pjeziorowski`,
+          },
+          {
+            name: `LinkedIn`,
+            url: `https://linkedin.com/in/patrykjeziorowski`,
+          },
+        ],
+      },
     },
     {
       resolve: `gatsby-plugin-google-analytics`,
       options: {
-        trackingId: 'UA-128288379-2'
-      }
+        trackingId: process.env.GOOGLE_ANALYTICS_ID,
+      },
     },
-    // {
-    //   resolve: `gatsby-plugin-netlify`,
-    // },
-  ]
+    `gatsby-plugin-sitemap`,
+    {
+      resolve: `gatsby-plugin-manifest`,
+      options: {
+        name: `Patryk Jeziorowski - all about software engineering`,
+        short_name: `Patryk Jeziorowski`,
+        description: `Sharing thoughts and knowledge about software engineering`,
+        start_url: `/`,
+        background_color: `#fff`,
+        theme_color: `#6B46C1`,
+        display: `standalone`,
+        icons: [
+          {
+            src: `/android-chrome-192x192.png`,
+            sizes: `192x192`,
+            type: `image/png`,
+          },
+          {
+            src: `/android-chrome-512x512.png`,
+            sizes: `512x512`,
+            type: `image/png`,
+          },
+        ],
+      },
+    },
+    `gatsby-plugin-offline`,
+    `gatsby-plugin-netlify`,
+  ],
 }
