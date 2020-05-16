@@ -7,6 +7,7 @@ module.exports = {
     siteHeadline: `Personal blog by Patryk Jeziorowski`,
     siteTitleAlt: `Personal blog by Patryk Jeziorowski`,
     siteDescription: `Sharing thoughts and knowledge about software engineering.`,
+    siteImage: `/banner.png`,
     siteUrl: `https://talkoverflow.com`,
     author: `Patryk Jeziorowski`
   },
@@ -55,7 +56,7 @@ module.exports = {
         description: `Sharing thoughts and knowledge about software engineering`,
         start_url: `/`,
         background_color: `#fff`,
-        theme_color: `#6B46C1`,
+        theme_color: `#4548B0`,
         display: `standalone`,
         icons: [
           {
